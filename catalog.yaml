@@ -1,0 +1,271 @@
+metadata:
+  version: "1.0"
+  updated: "2024-01-15T10:30:00Z"
+
+apps:
+  tensorflow:
+    metadata:
+      name: "TensorFlow"
+      description: "Machine learning framework"
+      versions: ["2.15.0"]
+      category: "machine-learning"
+      icon: "https://cdn.example.com/icons/tensorflow.svg"
+      tags: ["machine-learning", "tensorflow"]
+      screenshots:
+        - "https://cdn.example.com/screenshots/tensorflow-dashboard.png"
+        - "https://cdn.example.com/screenshots/tensorflow-flow.png"
+      documentation: "https://docs.example.com/tensorflow"  
+    variants:
+      prod:
+        label: "Production"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+            path: "tensorflow/docker-compose.yml"
+    requirements:
+      minMemory: "1GB"
+      architecture: ["amd64"]
+
+  influxdb:
+    metadata:
+      name: "InfluxDB"
+      description: "Time-series database"
+      versions: ["1.10.0"]
+      category: "database"
+      icon: "https://cdn.example.com/icons/influxdb.svg"
+      tags: ["database", "time-series"]
+      screenshots:
+        - "https://cdn.example.com/screenshots/influxdb-dashboard.png"
+        - "https://cdn.example.com/screenshots/influxdb-flow.png"
+      documentation: "https://docs.example.com/influxdb"
+    variants:
+      prod:
+        label: "Production"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+            path: "influxdb/docker-compose.yml"
+        configuration:
+          vars:
+            - name: "INFLUXDB_ADMIN_PASSWORD"
+              label: "InfluxDB Admin Password"
+    requirements:
+      minMemory: "1GB"
+      architecture: ["amd64"]
+
+  grafana:
+    metadata:
+      name: "Grafana"
+      description: "Visualize and monitor data"
+      versions: ["10.0.0", "11.0.0"]
+      category: "visualization"
+      icon: "https://cdn.example.com/icons/influxdb.svg"
+      tags: ["database", "time-series"]
+      screenshots:
+        - "https://cdn.example.com/screenshots/influxdb-dashboard.png"
+        - "https://cdn.example.com/screenshots/influxdb-flow.png"
+      documentation: "https://docs.example.com/influxdb"
+    variants:
+      prod:
+        label: "Production"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+            path: "grafana/docker-compose.yml"
+        configuration:
+          configs:
+            - label: "Grafana Configuration File"
+              device_path: "/data/grafana.ini"
+          vars:
+            - name: "GF_SECURITY_ADMIN_PASSWORD"
+              label: "Grafana Admin Password"
+    requirements:
+      minMemory: "512MB"
+      architecture: ["amd64"]
+
+  node-red:
+    metadata:
+      name: "Node-RED"
+      description: "Low-code programming for event-driven applications"
+      # This is the list of versions we can use with a variant
+      # We will automatically replace the ((PEP_IMAGE_VERSION)) placeholder in the Compose or Kubernetes Manifest
+      # with the selected version
+      # Note: PEP stands for Portainer Edge Portal
+      versions: ["3.1.14", "3.1.15", "4.0.9"]
+      category: "industrial-automation"
+      icon: "https://cdn.example.com/icons/node-red.svg"
+      tags: ["automation", "low-code", "mqtt"]
+      screenshots:
+        - "https://cdn.example.com/screenshots/node-red-dashboard.png"
+        - "https://cdn.example.com/screenshots/node-red-flow.png"
+      documentation: "https://docs.example.com/node-red"
+
+    variants:
+      # This is our production variant of the application
+      # When only one variant is defined, it will be used as the default variant
+      # and not shown in the UI
+      prod:
+        label: "Production"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            # A branch or a tag
+            ref: "main"
+            path: "node-red/docker-compose.yml"
+          kubernetes:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+            path: "node-red/kubernetes.yaml"
+          helm:
+            git: "github.com/your-org/edge-templates"
+            # This will be used as Helm release version
+            ref: "v1.0.0"
+
+        # The idea behind the configuration section
+        # is to provide a way to specify device or group specific configurations
+        # with a lookup in configuration files first and a fallback to environment variables
+        # It is optional and can be omitted if no configuration is needed
+        configuration:
+          # Configuration files are optional
+          # When specified, the user will be prompted to select a configuration defined in the Configuration area of the Edge Portal
+          # to associate with the file.
+          # There is no need to specify these files as well in the Compose file or Kubernetes manifest, they will be mounted automatically.
+          configs:
+            - label: "NodeRed Configuration File"
+              # container_path is optional, if it is not specified, the device_path will be used
+              # for example, in this case the mapping would be -v /data/config.json:/tmp/config.json
+              device_path: "/data/config.json"
+              container_path: "/tmp/config.json"
+
+          # Variables that are either replaced in configuration files or injected as environment variables
+          # We'll be looking for placeholders prefixed with ((PEP_ + the name of the variable within the configuration files above
+          # For example,
+          # ((PEP_MQTT_BROKER)) will be replaced with the value of the MQTT_BROKER variable
+          # ((PEP_MQTT_PORT)) will be replaced with the value of the MQTT_PORT variable
+          # If the placeholder is not found in any of the configuration files above,
+          # the variable will be injected directly as an environment variable.
+          # For example,
+          # if ((PEP_MQTT_BROKER)) is not found, MQTT_BROKER will be used injected as an environment variable
+          # if ((PEP_MQTT_PORT)) is not found, MQTT_PORT will be used injected as an environment variable
+          # The format is flexible enough to allow for extra properties in the future
+          # e.g. a list, number with validation (min, max, step), etc...
+          vars:
+            - name: "MQTT_BROKER"
+              label: "MQTT Broker Address"
+              default: "mqtt.example.com"
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
+            - name: "MQTT_USERNAME"
+              label: "MQTT Username"
+              default: "user"
+            - name: "MQTT_PASSWORD"
+              label: "MQTT Password"
+
+      # This is our testing variant of the application
+      # It doesn't have any configuration
+      test:
+        label: "Testing"
+        deployment:
+          # This variant is only available for Docker
+          compose:
+            git: "github.com/your-org/edge-templates"
+            # A branch or a tag
+            ref: "test-branch"
+            path: "node-red/docker-compose.yml"
+
+    requirements:
+      minMemory: "512MB"
+      architecture: ["amd64", "arm64"]
+
+  mosquitto:
+    metadata:
+      name: "Mosquitto"
+      description: "MQTT broker"
+      versions: ["2.0.17", "2.0.18", "2.0.19", "2.0.20", "2.0.21"]
+      category: "iot"
+      icon: "https://cdn.example.com/icons/mosquitto.svg"
+      tags: ["mqtt", "broker"]
+      screenshots:
+        - "https://cdn.example.com/screenshots/mosquitto-dashboard.png"
+        - "https://cdn.example.com/screenshots/mosquitto-flow.png"
+      documentation: "https://docs.example.com/mosquitto"
+    variants:
+      prod:
+        label: "Production"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "main"
+            path: "mosquitto/docker-compose.yml"
+          kubernetes:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+            path: "mosquitto/kubernetes.yaml"
+          helm:
+            git: "github.com/your-org/edge-templates"
+            ref: "v1.0.0"
+        configuration:
+          configs:
+            - label: "Mosquitto Configuration File"
+              device_path: "/data/mosquitto.conf"
+          vars:
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
+            - name: "MQTT_USERNAME"
+              label: "MQTT Username"
+              default: "admin"
+            - name: "MQTT_PASSWORD"
+              label: "MQTT Password"
+              default: "admin"
+      test:
+        label: "Testing"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "test-branch"
+            path: "mosquitto/docker-compose.yml"
+        configuration:
+          vars:
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
+            - name: "MQTT_USERNAME"
+              label: "MQTT Username"
+      advanced:
+        label: "Advanced"
+        deployment:
+          compose:
+            git: "github.com/your-org/edge-templates"
+            ref: "test-branch"
+            path: "mosquitto/docker-compose.yml"
+        configuration:
+          configs:
+            - label: "Mosquitto Configuration File"
+              device_path: "/data/mosquitto.conf"
+            - label: "Mosquitto Password File"
+              device_path: "/data/mosquitto.password"
+            - label: "Mosquitto ACL File"
+              device_path: "/data/mosquitto.acl"
+          vars:
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
+            - name: "MQTT_USERNAME"
+              label: "MQTT Username"
+              default: "admin"
+            - name: "MQTT_PASSWORD"
+              label: "MQTT Password"
+              default: "admin"
+            - name: "MQTT_ACL_RULE"
+              label: "MQTT ACL RULE"
+              default: "allow all"
+
+    requirements:
+      minMemory: "512MB"
+      architecture: ["amd64", "arm64"]
+
