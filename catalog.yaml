@@ -1,12 +1,14 @@
 metadata:
   version: "1.0"
-  updated: "2024-01-15T10:30:00Z"
+  updated: "2025-07-17T08:30:00Z"
 
 apps:
   tensorflow:
     metadata:
       name: "TensorFlow"
       description: "Machine learning framework"
+      overview: "TensorFlow is an open-source machine learning framework that enables developers to build and deploy ML models at scale. With support for both training and inference, TensorFlow provides a comprehensive ecosystem for developing intelligent applications on edge devices. Perfect for industrial AI applications requiring real-time processing and analysis."
+      publisher: "Google"
       versions: ["2.15.0"]
       category: "machine-learning"
       icon: "https://cdn.example.com/icons/tensorflow.svg"
@@ -31,6 +33,8 @@ apps:
     metadata:
       name: "InfluxDB"
       description: "Time-series database"
+      overview: "InfluxDB is a time-series database that is designed to handle high write and query loads. It is a core component of the TICK stack and is used for storing and querying time-series data."
+      publisher: "InfluxData"
       versions: ["1.10.0"]
       category: "database"
       icon: "https://cdn.example.com/icons/influxdb.svg"
@@ -59,6 +63,8 @@ apps:
     metadata:
       name: "Grafana"
       description: "Visualize and monitor data"
+      overview: "Grafana is an open-source platform for monitoring and observability. It is a core component of the TICK stack and is used for visualizing and monitoring time-series data."
+      publisher: "Grafana Labs"
       versions: ["10.0.0", "11.0.0"]
       category: "visualization"
       icon: "https://cdn.example.com/icons/influxdb.svg"
@@ -90,6 +96,8 @@ apps:
     metadata:
       name: "Node-RED"
       description: "Low-code programming for event-driven applications"
+      overview: "Node-RED is a powerful tool for building Internet of Things (IoT) applications with a focus on simplifying the creation of event-driven applications. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
+      publisher: "OpenJS Foundation"
       # This is the list of versions we can use with a variant
       # We will automatically replace the ((PEP_IMAGE_VERSION)) placeholder in the Compose or Kubernetes Manifest
       # with the selected version
@@ -185,6 +193,8 @@ apps:
     metadata:
       name: "Mosquitto"
       description: "MQTT broker"
+      overview: "Mosquitto is an open-source MQTT broker that is used for building IoT applications. It is a core component of the TICK stack and is used for storing and querying time-series data."
+      publisher: "Eclipse Foundation"
       versions: ["2.0.17", "2.0.18", "2.0.19", "2.0.20", "2.0.21"]
       category: "iot"
       icon: "https://cdn.example.com/icons/mosquitto.svg"
@@ -268,4 +278,3 @@ apps:
     requirements:
       minMemory: "512MB"
       architecture: ["amd64", "arm64"]
-
