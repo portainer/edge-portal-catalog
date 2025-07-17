@@ -1,0 +1,132 @@
+# Application Model Definition
+# This file defines an example of an application template for the Portainer Edge Portal (PEP)
+# It includes metadata, deployment configurations, and runtime settings
+
+  node-red:
+    # Application metadata - describes the application for users browsing the catalog
+    metadata:
+      # Display name shown in the application catalog and across the Edge Portal
+      name: "Node-RED"
+      
+      # Brief one-line description that appears in catalog listings
+      description: "Low-code programming for event-driven applications"
+      
+      # Detailed overview explaining the application's purpose and capabilities
+      # This appears in when inspecting a catalog entry
+      overview: "Node-RED is a powerful tool for building Internet of Things (IoT) applications with a focus on simplifying the creation of event-driven applications. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
+      
+      # Organization or entity that maintains this application
+      publisher: "OpenJS Foundation"
+      
+      # Available application versions that can be deployed
+      # The ((PEP_IMAGE_VERSION)) placeholder in deployment files will be automatically 
+      # replaced with the user-selected version from this list
+      versions: ["3.1.14", "3.1.15", "4.0.9"]
+      
+      # Application category for organizing the catalog (e.g., "databases", "monitoring", "industrial-automation")
+      category: "industrial-automation"
+      
+      # URL to the application's icon/logo
+      icon: "https://cdn.example.com/icons/node-red.svg"
+      
+      # Searchable tags to help users discover this application
+      tags: ["automation", "low-code", "mqtt"]
+      
+      # URLs to application screenshots displayed in the catalog
+      # These help users understand the application's interface before deployment
+      screenshots:
+        - "https://cdn.example.com/screenshots/node-red-dashboard.png"
+        - "https://cdn.example.com/screenshots/node-red-flow.png"
+      
+      # URL to official documentation or user guide
+      documentation: "https://docs.example.com/node-red"
+
+    # Application variants - different deployment configurations for the same application
+    # Each variant represents a different use case, environment, or configuration
+    variants:
+      # Production variant - optimized for production deployments
+      # When only one variant exists, it becomes the default and won't show variant selection in UI
+      prod:
+        # Human-readable label for this variant shown in the deployment UI
+        label: "Production"
+        
+        # Deployment configuration - defines how the application is deployed
+        deployment:
+          # Docker Compose deployment option
+          compose:
+            # Git repository containing the deployment files
+            git: "github.com/your-org/edge-templates"
+            # Git branch or tag to use (e.g., "main", "v1.0.0")
+            ref: "main"
+            # Path to the docker-compose.yml file within the repository
+            path: "node-red/docker-compose.yml"
+          
+          # Kubernetes deployment option (for environments supporting Kubernetes)
+          kubernetes:
+            git: "github.com/your-org/edge-templates"
+            # Specific version tag for stable deployments
+            ref: "v1.0.0"
+            # Path to Kubernetes manifest file
+            path: "node-red/kubernetes.yaml"
+          
+          # Helm chart deployment option (for Helm-enabled Kubernetes clusters)
+          helm:
+            git: "github.com/your-org/edge-templates"
+            # This ref will be used as the Helm release version
+            ref: "v1.0.0"
+
+        # Runtime configuration system for device-specific and location-specific settings
+        # This section is optional - omit if no custom configuration is needed
+        configuration:
+          # Configuration files that can be mounted into the container
+          # Users select pre-defined configurations from the Edge Portal's Configuration area
+          configs:
+            - # User-friendly label for this configuration file
+              label: "NodeRed Configuration File"
+              # Path on the edge device where the config file will be stored
+              device_path: "/data/config.json"
+              # Path inside the container where the config file will be mounted
+              # If omitted, device_path will be used (e.g., -v /data/config.json:/data/config.json)
+              container_path: "/tmp/config.json"
+
+          # Variables for dynamic configuration replacement and environment injection
+          # The system looks for placeholders like ((PEP_VARIABLE_NAME)) in config files
+          # If placeholder exists: replaces it with the variable value
+          # If placeholder not found: injects as environment variable VARIABLE_NAME
+          vars:
+            - # Variable identifier (used in placeholders and environment variables)
+              name: "MQTT_BROKER"
+              # User-friendly label shown in the app installation form
+              label: "MQTT Broker Address"
+              # Default value pre-filled in the app installation form
+              # Default value is optional
+              default: "mqtt.example.com"
+              
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
+              
+            - name: "MQTT_USERNAME"
+              label: "MQTT Username"
+              default: "user"
+              
+            - name: "MQTT_PASSWORD"
+              label: "MQTT Password"
+
+
+      # Testing variant - configured for development and testing environments
+      # Typically uses different branches, configurations, or resource allocations
+      test:
+        # Display label for this testing variant
+        label: "Testing"
+        
+        deployment:
+          # Only Docker Compose deployment available for this variant
+          # Kubernetes and Helm options omitted intentionally
+          compose:
+            git: "github.com/your-org/edge-templates"
+            # Uses a testing branch instead of stable main/tagged versions
+            ref: "test-branch"
+            path: "node-red/docker-compose.yml"
+        
+        # No configuration section - testing variant uses default settings
