@@ -1,0 +1,39 @@
+{
+    "flowFile": "flows.json",
+    "credentialSecret": "your-strong-secret",
+    "ui": {
+      "path": "ui"
+    },
+    "httpAdminRoot": "/admin",
+    "httpNodeRoot": "/api",
+    "userDir": "/data",
+    "functionGlobalContext": {},
+    "logging": {
+      "console": {
+        "level": "info",
+        "metrics": false,
+        "audit": false
+      }
+    },
+    "mqttReconnectTime": 15000,
+    "contextStorage": {
+      "default": {
+        "module": "memory"
+      }
+    },
+    "editorTheme": {
+      "projects": {
+        "enabled": false
+      },
+      "palette": {
+        "editable": true
+      }
+    },
+    "externalModules": {
+      "autoInstall": false,
+      "palette": {
+        "allowInstall": true
+      }
+    }
+  }
+  

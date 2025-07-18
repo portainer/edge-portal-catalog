@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  nodered:
+    image: nodered/node-red:((PEP_IMAGE_VERSION))
+    container_name: nodered
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=UTC
+    volumes:
+      - /data/config.json:/tmp/config.json
+
+networks:
+  default:
+    driver: bridge

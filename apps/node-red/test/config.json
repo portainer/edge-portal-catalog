@@ -1,0 +1,9 @@
+{
+    "flowFile": "flows.json",
+    "credentialSecret": "your-strong-secret",
+    "ui": {
+      "path": "ui"
+    },
+    "debug": "((PEP_DEBUG_MODE))"
+  }
+  

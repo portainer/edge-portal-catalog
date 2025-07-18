@@ -2,6 +2,21 @@
 # This file defines an example of an application template for the Portainer Edge Portal (PEP)
 # It includes metadata, deployment configurations, and runtime settings
 
+# Global catalog metadata
+metadata:
+  # Catalog version for tracking changes and compatibility
+  version: "1.0"
+  # Last updated timestamp
+  updated: "2025-07-18T10:30:00Z"
+  # Default source repository for deployment files and configurations
+  # This is inherited by deployments that don't specify their own git repository
+  source:
+    # Default git repository containing deployment files and configurations
+    git: "github.com/your-org/edge-templates"
+    # Default git branch or tag to use when not specified in individual deployments
+    ref: "main"
+
+apps:
   node-red:
     # Application metadata - describes the application for users browsing the catalog
     metadata:
@@ -50,30 +65,53 @@
         # Human-readable label for this variant shown in the deployment UI
         label: "Production"
         
+        # Variant-specific configuration templates
+        # These define default configurations that can be referenced by this variant
+        # Configuration files are designed specifically for this variant's expected placeholders
+        config_templates:
+          # Production configuration template for this variant
+          production:
+            # Human-readable name for this configuration template
+            name: "Node-RED Production Configuration"
+            # Description explaining when to use this configuration
+            description: "Production-ready Node-RED configuration with security and performance optimizations"
+            # Path to configuration file relative to the source repository root
+            # This file contains placeholders that match the variables defined in this variant
+            path: "apps/node-red/prod/config.json"
+
+          # MQTT-specific configuration for production
+          mqtt:
+            name: "Node-RED Production MQTT Configuration"
+            description: "MQTT broker connection settings for production environment"
+            # Path to configuration file relative to the source repository root
+            path: "apps/node-red/prod/mqtt.json"
+        
         # Deployment configuration - defines how the application is deployed
+        # Git properties are optional - when omitted, files are sourced from metadata.source
         deployment:
           # Docker Compose deployment option
+          # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
           compose:
-            # Git repository containing the deployment files
-            git: "github.com/your-org/edge-templates"
-            # Git branch or tag to use (e.g., "main", "v1.0.0")
-            ref: "main"
-            # Path to the docker-compose.yml file within the repository
-            path: "node-red/docker-compose.yml"
+            # Path to the docker-compose.yml file relative to the source repository root
+            path: "apps/node-red/docker-compose.yml"
           
           # Kubernetes deployment option (for environments supporting Kubernetes)
+          # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
           kubernetes:
-            git: "github.com/your-org/edge-templates"
-            # Specific version tag for stable deployments
-            ref: "v1.0.0"
-            # Path to Kubernetes manifest file
-            path: "node-red/kubernetes.yaml"
+            # Path to Kubernetes manifest file relative to the source repository root
+            path: "apps/node-red/kubernetes.yaml"
           
           # Helm chart deployment option (for Helm-enabled Kubernetes clusters)
+          # This example shows external repository usage for Helm charts
           helm:
-            git: "github.com/your-org/edge-templates"
-            # This ref will be used as the Helm release version
+            # External git repository containing the Helm chart (overrides metadata.source)
+            git: "github.com/your-org/helm-charts"
+            # Git branch or tag to use for the Helm chart (overrides metadata.source.ref)
             ref: "v1.0.0"
+            # Path to the Helm chart within the repository (chart name)
+            path: "node-red"
+            # Chart name to use for installation - specific to Helm
+            chart: "node-red"
 
         # Runtime configuration system for device-specific and location-specific settings
         # This section is optional - omit if no custom configuration is needed
@@ -88,6 +126,16 @@
               # Path inside the container where the config file will be mounted
               # If omitted, device_path will be used (e.g., -v /data/config.json:/data/config.json)
               container_path: "/tmp/config.json"
+              # Reference to variant-specific configuration template
+              # This provides a default configuration that will be automatically fetched during app installation
+              default_config_ref: "production"
+              
+            - # Example of a second config file for MQTT settings
+              label: "MQTT Configuration"
+              device_path: "/data/mqtt.json"
+              container_path: "/tmp/mqtt.json"
+              # Reference to variant-specific MQTT configuration template
+              default_config_ref: "mqtt"
 
           # Variables for dynamic configuration replacement and environment injection
           # The system looks for placeholders like ((PEP_VARIABLE_NAME)) in config files
@@ -113,20 +161,48 @@
             - name: "MQTT_PASSWORD"
               label: "MQTT Password"
 
-
       # Testing variant - configured for development and testing environments
       # Typically uses different branches, configurations, or resource allocations
       test:
         # Display label for this testing variant
         label: "Testing"
         
+        # Variant-specific configuration templates for testing environment
+        config_templates:
+          # Development configuration template with debug capabilities
+          development:
+            name: "Node-RED Development Configuration"
+            description: "Development configuration with debug logging and relaxed security"
+            # Path to configuration file that includes DEBUG_MODE placeholder
+            path: "apps/node-red/test/config.json"
+        
         deployment:
           # Only Docker Compose deployment available for this variant
-          # Kubernetes and Helm options omitted intentionally
+          # This example shows referencing a third-party repository for the deployment files
           compose:
-            git: "github.com/your-org/edge-templates"
-            # Uses a testing branch instead of stable main/tagged versions
-            ref: "test-branch"
-            path: "node-red/docker-compose.yml"
+            # External git repository (e.g., official Node-RED examples) - overrides metadata.source
+            git: "github.com/node-red/node-red-docker"
+            # Uses a specific branch or tag - overrides metadata.source.ref
+            ref: "main"
+            # Path to the docker-compose.yml file within the external repository
+            path: "docker-compose.yml"
         
-        # No configuration section - testing variant uses default settings
+        # Testing variant configuration with variables that match expected placeholders in test config files
+        configuration:
+          configs:
+            - label: "NodeRed Configuration File"
+              device_path: "/data/config.json"
+              container_path: "/tmp/config.json"
+              # Use development configuration template for testing
+              default_config_ref: "development"
+          # Variables that match the placeholders in apps/node-red/test/config.json
+          vars:
+            - name: "DEBUG_MODE"
+              label: "Enable Debug Mode"
+              default: "true"
+            - name: "MQTT_BROKER"
+              label: "MQTT Broker Address (Test)"
+              default: "mqtt.test.example.com"
+            - name: "MQTT_PORT"
+              label: "MQTT Port"
+              default: "1883"
