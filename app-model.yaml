@@ -65,6 +65,17 @@ apps:
         # Human-readable label for this variant shown in the deployment UI
         label: "Production"
         
+        # Version requirements for this variant
+        # Controls which application versions from metadata.versions are compatible with this variant
+        version_requirements:
+          # Minimum version required for this variant to function properly
+          # This variant requires features or fixes that were introduced in version 3.1.15
+          # Users will only see versions 3.1.15 and higher when selecting this variant
+          min: "3.1.15"
+          # Maximum version supported (optional)
+          # Uncomment if this variant is known to break with newer versions
+          # max: "3.9.99"  # Example: if this variant breaks in v4.x due to API changes
+        
         # Variant-specific configuration templates
         # These define default configurations that can be referenced by this variant
         # Configuration files are designed specifically for this variant's expected placeholders
@@ -166,6 +177,15 @@ apps:
       test:
         # Display label for this testing variant
         label: "Testing"
+        
+        # Version requirements for testing variant
+        # This variant demonstrates the minimum + maximum approach for legacy compatibility
+        version_requirements:
+          # Testing variant works with older versions (no minimum requirement)
+          # min: "3.1.14"  # Omitted - this variant supports all available versions
+          # Maximum version constraint to demonstrate legacy variant handling
+          # This testing variant uses deprecated APIs that were removed in v4.x
+          max: "3.9.99"  # This variant only works with v3.x series, breaks in v4.x
         
         # Variant-specific configuration templates for testing environment
         config_templates:
