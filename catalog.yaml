@@ -23,9 +23,8 @@ apps:
     variants:
       prod:
         label: "Production"
-        # No version requirements needed - only one version available
-        # version_requirements:
-        #   min: "2.15.0"  # Could be added when more versions are available
+        # No version requirement needed - only one version available
+        # version_requirement: ">=2.15.0"  # Could be added when more versions are available
         deployment:
           compose:
             path: "apps/tensorflow/docker-compose.yml"
@@ -50,9 +49,8 @@ apps:
     variants:
       prod:
         label: "Production"
-        # No version requirements needed - only one version available
-        # version_requirements:
-        #   min: "1.10.0"  # Could be added when more versions are available
+        # No version requirement needed - only one version available
+        # version_requirement: ">=1.10.0"  # Could be added when more versions are available
         config_templates:
           production:
             name: "InfluxDB Production Configuration"
@@ -91,7 +89,8 @@ apps:
     variants:
       prod:
         label: "Production"
-        # No version requirements needed - only one variant available
+        # Production variant requires newer version for enhanced security features
+        version_requirement: ">=11.0.0"  # Requires v11.x for improved authentication and security
         config_templates:
           production:
             name: "Grafana Production Configuration"
@@ -131,8 +130,7 @@ apps:
       prod:
         label: "Production"
         # Production variant requires minimum version for security and performance features
-        version_requirements:
-          min: "3.1.15"  # Requires security patches and performance improvements
+        version_requirement: ">=3.1.15"  # Requires security patches and performance improvements
         config_templates:
           production:
             name: "Node-RED Production Configuration"
@@ -177,8 +175,7 @@ apps:
       test:
         label: "Testing"
         # Testing variant uses legacy compatibility - breaks with v4.x due to API changes
-        version_requirements:
-          max: "3.9.99"  # Only works with v3.x series, breaks in v4.x
+        version_requirement: "<4"  # Only works with v3.x series, breaks in v4.x
         config_templates:
           development:
             name: "Node-RED Development Configuration"
@@ -220,8 +217,7 @@ apps:
       prod:
         label: "Production"
         # Production variant requires recent version with critical bug fixes
-        version_requirements:
-          min: "2.0.19"  # Requires critical security and stability fixes
+        version_requirement: ">=2.0.19"  # Requires critical security and stability fixes
         config_templates:
           production:
             name: "Mosquitto Production Configuration"
@@ -256,7 +252,7 @@ apps:
       test:
         label: "Testing"
         # Testing variant works with all versions for maximum compatibility
-        # No version requirements - supports all available versions
+        # No version requirement - supports all available versions
         config_templates:
           test:
             name: "Mosquitto Test Configuration"
@@ -280,8 +276,7 @@ apps:
       advanced:
         label: "Advanced"
         # Advanced variant requires latest version for enhanced ACL and authentication features
-        version_requirements:
-          min: "2.0.20"  # Requires enhanced ACL and authentication features
+        version_requirement: ">=2.0.20"  # Requires enhanced ACL and authentication features
         config_templates:
           advanced:
             name: "Mosquitto Advanced Configuration"
