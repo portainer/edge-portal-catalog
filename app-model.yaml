@@ -75,6 +75,13 @@ apps:
         deployment:
           # Docker Compose deployment option
           # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
+          #
+          # HOW CONFIGURATION INJECTION WORKS:
+          # - The docker-compose.yml file remains unchanged (source of truth in git)
+          # - PEP generates a docker-compose.override.yml file on each edge device
+          # - Docker Compose automatically merges both files when running `docker compose up`
+          # - Override file contains bind mounts from configuration.files and env vars from configuration.vars
+          # - See apps/node-red/docker-compose.override.yml for an example of what PEP generates
           compose:
             # Path to the docker-compose.yml file relative to the source repository root
             path: "apps/node-red/docker-compose.yml"

@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   nodered:
+    # PEP replaces ((PEP_IMAGE_VERSION)) with user-selected version before deployment
     image: nodered/node-red:((PEP_IMAGE_VERSION))
     container_name: nodered
     restart: unless-stopped
@@ -9,8 +10,9 @@ services:
       - "1880:1880"
     environment:
       - TZ=UTC
-    # This is just an example, the volumes section is actually optional
-    # PEP will automatically inject the volumes into the container based on the configuration.configs entries
+    # Named volume for persistent Node-RED data
+    # Configuration file bind mounts are added via docker-compose.override.yml
+    # See: apps/node-red/docker-compose.override.yml for example of PEP-generated overrides
     volumes:
       - nodered_data:/data
 

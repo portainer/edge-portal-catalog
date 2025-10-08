@@ -241,6 +241,31 @@ When modifying YAML files, ensure:
 5. Ensure matching variables are defined in `configuration.vars`
 6. (Optional) Update `default` property if this should be the default template
 
+## Docker Compose Override File Pattern
+
+PEP uses the standard Docker Compose override file pattern to inject runtime configuration without modifying the source `docker-compose.yml` files.
+
+**How it works:**
+1. Original `docker-compose.yml` remains unchanged in git (source of truth)
+2. PEP generates `docker-compose.override.yml` on each edge device
+3. Docker Compose automatically merges both files at runtime
+4. Override file contains device-specific bind mounts and environment variables
+
+**What PEP injects into override files:**
+- Volume bind mounts from `configuration.files` entries
+- Environment variables from `configuration.vars` entries
+- Device-specific runtime configuration
+
+**Example:** See `apps/node-red/docker-compose.override.yml` for a comprehensive example showing what PEP generates based on catalog configuration.
+
+**Benefits:**
+- Source files remain clean and unchanged
+- Standard Docker Compose pattern (well-documented)
+- Easy debugging: inspect override file to see what PEP added
+- Clear separation: base config in git, runtime config in override
+
+**Note:** This pattern is currently used for Docker Compose deployments. Kubernetes and Helm will use platform-native patterns (ConfigMaps, Secrets, Values) when support is added.
+
 ## Testing Changes
 
 This repository contains configuration files only. Testing typically involves:
