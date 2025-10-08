@@ -22,37 +22,37 @@ apps:
     metadata:
       # Display name shown in the application catalog and across the Edge Portal
       name: "Node-RED"
-      
+
       # Brief one-line description that appears in catalog listings
       description: "Low-code programming for event-driven applications"
-      
+
       # Detailed overview explaining the application's purpose and capabilities
-      # This appears in when inspecting a catalog entry
+      # This appears when inspecting a catalog entry
       overview: "Node-RED is a powerful tool for building Internet of Things (IoT) applications with a focus on simplifying the creation of event-driven applications. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
-      
+
       # Organization or entity that maintains this application
       publisher: "OpenJS Foundation"
-      
+
       # Available application versions that can be deployed
-      # The ((PEP_IMAGE_VERSION)) placeholder in deployment files will be automatically 
+      # The ((PEP_IMAGE_VERSION)) placeholder in deployment files will be automatically
       # replaced with the user-selected version from this list
       versions: ["3.1.14", "3.1.15", "4.0.9"]
-      
+
       # Application category for organizing the catalog (e.g., "databases", "monitoring", "industrial-automation")
       category: "industrial-automation"
-      
+
       # URL to the application's icon/logo
       icon: "https://cdn.example.com/icons/node-red.svg"
-      
+
       # Searchable tags to help users discover this application
       tags: ["automation", "low-code", "mqtt"]
-      
+
       # URLs to application screenshots displayed in the catalog
       # These help users understand the application's interface before deployment
       screenshots:
         - "https://cdn.example.com/screenshots/node-red-dashboard.png"
         - "https://cdn.example.com/screenshots/node-red-flow.png"
-      
+
       # URL to official documentation or user guide
       documentation: "https://docs.example.com/node-red"
 
@@ -64,33 +64,12 @@ apps:
       prod:
         # Human-readable label for this variant shown in the deployment UI
         label: "Production"
-        
+
         # Version requirement - single constraint using simple operators
         # Supported operators: >=, >, =, <, <= (only ONE constraint per variant)
         # This eliminates conflicting constraints and keeps parsing simple
         version_requirement: ">=3.1.15"  # Requires version 3.1.15 or higher
-        
-        # Variant-specific configuration templates
-        # These define default configurations that can be referenced by this variant
-        # Configuration files are designed specifically for this variant's expected placeholders
-        config_templates:
-          # Production configuration template for this variant
-          production:
-            # Human-readable name for this configuration template
-            name: "Node-RED Production Configuration"
-            # Description explaining when to use this configuration
-            description: "Production-ready Node-RED configuration with security and performance optimizations"
-            # Path to configuration file relative to the source repository root
-            # This file contains placeholders that match the variables defined in this variant
-            path: "apps/node-red/prod/config.json"
 
-          # MQTT-specific configuration for production
-          mqtt:
-            name: "Node-RED Production MQTT Configuration"
-            description: "MQTT broker connection settings for production environment"
-            # Path to configuration file relative to the source repository root
-            path: "apps/node-red/prod/mqtt.json"
-        
         # Deployment configuration - defines how the application is deployed
         # Git properties are optional - when omitted, files are sourced from metadata.source
         deployment:
@@ -99,13 +78,13 @@ apps:
           compose:
             # Path to the docker-compose.yml file relative to the source repository root
             path: "apps/node-red/docker-compose.yml"
-          
+
           # Kubernetes deployment option (for environments supporting Kubernetes)
           # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
           kubernetes:
             # Path to Kubernetes manifest file relative to the source repository root
             path: "apps/node-red/kubernetes.yaml"
-          
+
           # Helm chart deployment option (for Helm-enabled Kubernetes clusters)
           # This example shows external repository usage for Helm charts
           helm:
@@ -119,112 +98,259 @@ apps:
             chart: "node-red"
 
         # Runtime configuration system for device-specific and location-specific settings
-        # This section is optional - omit if no custom configuration is needed
+        #
+        # OPTIONAL: This entire section can be omitted for simple applications that don't need
+        # any custom configuration. When omitted, the PEP UI will skip the configuration wizard
+        # step entirely and proceed directly to deployment.
+        #
+        # KEY CONCEPTS:
+        # 1. Configuration Files (files): Define bind mount mappings for configuration files
+        #    - Specifies WHERE files are stored on device (device_path)
+        #    - Specifies WHERE files are mounted in container (container_path)
+        #    - PEP automatically handles file propagation, bind mounts, and volume management
+        #    - Each file can have multiple template options for users to select from
+        #
+        # 2. Templates: Pre-defined configuration file options stored in the catalog repository
+        #    - Defined inline within each file entry (scoped to that specific mount point)
+        #    - Users select from these templates via dropdown in the PEP UI
+        #    - Templates can contain ((PEP_*)) placeholders that are replaced with variable values
+        #
+        # 3. Variables (vars): User-provided values collected during app installation
+        #    - Used to replace ((PEP_VARIABLE_NAME)) placeholders in template files
+        #    - If placeholder exists in template → replaced with the value
+        #    - If placeholder NOT found → injected as environment variable VARIABLE_NAME
+        #    - Can be used standalone (without files) for environment-only configuration
         configuration:
-          # Configuration files that can be mounted into the container
-          # Users select pre-defined configurations from the Edge Portal's Configuration area
-          configs:
-            - # User-friendly label for this configuration file
-              label: "NodeRed Configuration File"
-              # Path on the edge device where the config file will be stored
+          # Configuration files to be mounted into the container
+          # This is a list of file mount points, each with its own template options
+          # The order in this list determines the display order in the PEP UI
+          files:
+            # First file mount: Application main configuration
+            - # User-friendly label shown in the PEP UI for this configuration file
+              label: "Application Configuration"
+
+              # Path on the edge device where this config file will be stored
+              # PEP manages this location and ensures the file exists before container starts
               device_path: "/data/config.json"
-              # Path inside the container where the config file will be mounted
+
+              # Path inside the container where this config file will be mounted
+              # PEP automatically creates the bind mount: -v device_path:container_path
               # If omitted, device_path will be used (e.g., -v /data/config.json:/data/config.json)
               container_path: "/tmp/config.json"
-              # Reference to variant-specific configuration template
-              # This provides a default configuration that will be automatically fetched during app installation
-              default_config_ref: "production"
-              
-            - # Example of a second config file for MQTT settings
-              label: "MQTT Configuration"
+
+              # Template options for this specific configuration file
+              # This is a dictionary where each key is a template identifier
+              # Users will see these options in a dropdown in the PEP UI
+              templates:
+                # Template identifier: used internally and as the value for "default" property
+                production:
+                  # REQUIRED: Human-readable name displayed in the template selection dropdown
+                  name: "Production Configuration"
+                  # REQUIRED: Description shown in UI to help users choose the right template
+                  # Should explain when to use this template and what it configures
+                  description: "Production-ready Node-RED configuration with security and performance optimizations. Recommended for production deployments."
+                  # REQUIRED: Path to the template file relative to the source repository root
+                  # This file can contain ((PEP_*)) placeholders that will be replaced with values from vars
+                  path: "apps/node-red/prod/config.json"
+
+                # Alternative template for development environments
+                development:
+                  name: "Development Configuration"
+                  description: "Development configuration with debug logging enabled and relaxed security. Use for testing and development only."
+                  path: "apps/node-red/dev/config.json"
+
+                # Minimal configuration template
+                minimal:
+                  name: "Minimal Configuration"
+                  description: "Minimal configuration with only essential settings. Good starting point for customization."
+                  path: "apps/node-red/minimal/config.json"
+
+              # OPTIONAL: Specifies which template is pre-selected by default
+              # Must reference a valid key from the templates dictionary above
+              # If omitted when multiple templates exist, the FIRST template in YAML order is selected
+              # In this example, if "default" was omitted, "production" would be selected (first in list)
+              default: "production"
+
+              # OPTIONAL: When true, prevents users from changing the template selection in the UI
+              # Default: false (users can select from available templates)
+              #
+              # USE CASES FOR LOCKED CONFIGURATIONS:
+              # - Corporate security policies that must not be modified by operators
+              # - Compliance requirements (e.g., HIPAA, PCI-DSS) that mandate specific settings
+              # - Critical system configurations where user modification could break the application
+              # - Standardized configurations across multiple edge deployments
+              #
+              # UI BEHAVIOR:
+              # - When locked: true → UI shows "Using: [template name]" (read-only, no dropdown)
+              # - When locked: false or omitted → UI shows dropdown with all available templates
+              #
+              # FLEXIBILITY:
+              # - You can have locked: true with multiple templates defined
+              # - This allows you to "lock for now" but easily unlock later without schema changes
+              # - Useful when you want to enforce a specific config today but may allow selection in future
+              # - Only the "default" template is used when locked, but others remain available for future use
+              locked: false
+
+            # Second file mount: MQTT broker configuration
+            # This example shows a locked configuration with multiple templates for future flexibility
+            - label: "MQTT Broker Configuration"
               device_path: "/data/mqtt.json"
               container_path: "/tmp/mqtt.json"
-              # Reference to variant-specific MQTT configuration template
-              default_config_ref: "mqtt"
+              templates:
+                production:
+                  name: "Production MQTT Broker"
+                  description: "Production MQTT broker connection settings with TLS and authentication"
+                  path: "apps/node-red/prod/mqtt.json"
+                testing:
+                  name: "Test MQTT Broker"
+                  description: "Test environment MQTT broker (no TLS)"
+                  path: "apps/node-red/test/mqtt.json"
+              default: "production"
+              # Locked to production for now, but testing template available for future use
+              locked: true
+
+            # Third file mount: Security policy (locked, single template)
+            # This demonstrates a truly locked configuration for security compliance
+            - label: "Security Policy"
+              device_path: "/data/security.json"
+              container_path: "/app/security.json"
+              templates:
+                corporate:
+                  name: "Corporate Security Policy"
+                  description: "Mandatory security policy enforced by corporate IT. Cannot be modified."
+                  path: "apps/node-red/security/corporate.json"
+              # Only one template, locked to prevent any modification
+              # No "default" needed when only one template exists (automatically selected)
+              locked: true
+
+            # EDGE CASE: Mounting files that already exist on the device
+            #
+            # When the templates section is OMITTED entirely, PEP will NOT provide any default file
+            # The file must already exist at device_path before the container starts
+            # PEP will only create the bind mount, not manage the file content
+            #
+            # USE CASES:
+            # - Mounting certificates or keys placed by operators
+            # - Mounting files managed by other processes or tools
+            # - Mounting shared configuration files used by multiple applications
+            #
+            # LENIENT PARSING:
+            # An empty templates dict (templates: {}) is also accepted and treated identically
+            # to omitting the templates section entirely. However, omitting the section is
+            # the preferred/canonical syntax for clarity.
+            - label: "SSL Certificate"
+              device_path: "/data/certs/ssl.crt"
+              container_path: "/app/certs/ssl.crt"
+              # No templates section - file must already exist on device
+
+            - label: "SSH Private Key"
+              device_path: "/data/.ssh/id_rsa"
+              container_path: "/root/.ssh/id_rsa"
+              # File must be placed on device by operator or another process
 
           # Variables for dynamic configuration replacement and environment injection
-          # The system looks for placeholders like ((PEP_VARIABLE_NAME)) in config files
-          # If placeholder exists: replaces it with the variable value
-          # If placeholder not found: injects as environment variable VARIABLE_NAME
+          #
+          # USAGE MODES:
+          # 1. With "files" section: Replace ((PEP_VARIABLE_NAME)) placeholders in template files
+          # 2. Standalone (without "files"): Inject as environment variables only
+          #
+          # PROCESSING LOGIC:
+          # - If placeholder ((PEP_VARIABLE_NAME)) exists in template file → replaced with value
+          # - If placeholder NOT found in template → injected as environment variable VARIABLE_NAME
+          # - Variable names should use UPPER_SNAKE_CASE convention
+          # - Placeholders in template files use format: ((PEP_VARIABLE_NAME))
           vars:
-            - # Variable identifier (used in placeholders and environment variables)
+            - # REQUIRED: Variable identifier
+              # Used in placeholders as ((PEP_MQTT_BROKER)) and as env var MQTT_BROKER
               name: "MQTT_BROKER"
-              # User-friendly label shown in the app installation form
+
+              # REQUIRED: User-friendly label shown in the app installation form
               label: "MQTT Broker Address"
-              # Default value pre-filled in the app installation form
-              # Default value is optional
+
+              # OPTIONAL: Default value pre-filled in the app installation form
+              # If omitted, the field will be empty and user must provide a value
               default: "mqtt.example.com"
-              
+
             - name: "MQTT_PORT"
               label: "MQTT Port"
               default: "1883"
-              
+
             - name: "MQTT_USERNAME"
               label: "MQTT Username"
               default: "user"
-              
+
+            # Example without default - user must provide value
             - name: "MQTT_PASSWORD"
               label: "MQTT Password"
+              # No default - field will be empty, requiring user input
 
       # Testing variant - configured for development and testing environments
-      # Typically uses different branches, configurations, or resource allocations
+      # This variant demonstrates simplified configuration with fewer options
       test:
-        # Display label for this testing variant
         label: "Testing"
-        
-        # Version requirement - excludes v4.x series due to breaking changes
         version_requirement: "<4.0.0"  # Only v3.x series (3.1.14, 3.1.15)
-        
-        # Variant-specific configuration templates for testing environment
-        config_templates:
-          # Development configuration template with debug capabilities
-          development:
-            name: "Node-RED Development Configuration"
-            description: "Development configuration with debug logging and relaxed security"
-            # Path to configuration file that includes DEBUG_MODE placeholder
-            path: "apps/node-red/test/config.json"
-        
+
         deployment:
-          # Only Docker Compose deployment available for this variant
-          # This example shows referencing a third-party repository for the deployment files
           compose:
-            # External git repository (e.g., official Node-RED examples) - overrides metadata.source
             git: "github.com/node-red/node-red-docker"
-            # Uses a specific branch or tag - overrides metadata.source.ref
             ref: "main"
-            # Path to the docker-compose.yml file within the external repository
             path: "docker-compose.yml"
-        
-        # Testing variant configuration with variables that match expected placeholders in test config files
+
+        # Simplified configuration with single template and environment variables
         configuration:
-          configs:
-            - label: "NodeRed Configuration File"
+          files:
+            - label: "Development Configuration"
               device_path: "/data/config.json"
               container_path: "/tmp/config.json"
-              # Use development configuration template for testing
-              default_config_ref: "development"
-          # Variables that match the placeholders in apps/node-red/test/config.json
+              templates:
+                development:
+                  name: "Development Config"
+                  description: "Debug mode enabled with verbose logging"
+                  path: "apps/node-red/test/config.json"
+              # Single template - no "default" needed (automatically selected)
+
           vars:
             - name: "DEBUG_MODE"
               label: "Enable Debug Mode"
               default: "true"
-            - name: "MQTT_BROKER"
-              label: "MQTT Broker Address (Test)"
-              default: "mqtt.test.example.com"
-            - name: "MQTT_PORT"
-              label: "MQTT Port"
-              default: "1883"
+            - name: "LOG_LEVEL"
+              label: "Log Level"
+              default: "debug"
 
-      # Legacy variant - pinned to exact version
+      # Legacy variant - minimal configuration example
       legacy:
-        # Display label for legacy variant
         label: "Legacy (3.1.14 only)"
-        
-        # Version requirement - exact version match
-        version_requirement: "=3.1.14"  # Only version 3.1.14
-        
+        version_requirement: "=3.1.14"
+
         deployment:
           compose:
             git: "github.com/node-red/node-red-docker"
             ref: "legacy"
             path: "docker-compose.yml"
+
+        # No configuration section - PEP UI will skip configuration wizard step
+        # Use this for simple applications that require no custom configuration
+
+      # Example: Environment variables only (no configuration files)
+      env_only:
+        label: "Environment Variables Only"
+        version_requirement: ">=3.1.15"
+
+        deployment:
+          compose:
+            path: "apps/node-red/docker-compose.yml"
+
+        # Configuration with only variables (no files section)
+        # Variables will be injected as environment variables into the container
+        # USE CASE: Applications that are configured entirely via environment variables
+        configuration:
+          vars:
+            - name: "NODE_ENV"
+              label: "Node Environment"
+              default: "production"
+            - name: "LOG_LEVEL"
+              label: "Log Level"
+              default: "info"
+            - name: "API_KEY"
+              label: "API Key"
+              # No default - user must provide
