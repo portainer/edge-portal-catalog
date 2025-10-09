@@ -1,6 +1,8 @@
 metadata:
   version: "1.0"
   updated: "2025-07-18T10:30:00Z"
+
+defaults:
   source:
     git: "github.com/your-org/edge-templates"
     ref: "main"
@@ -19,12 +21,9 @@ apps:
       screenshots:
         - "https://cdn.example.com/screenshots/tensorflow-dashboard.png"
         - "https://cdn.example.com/screenshots/tensorflow-flow.png"
-      documentation: "https://docs.example.com/tensorflow"  
+      documentation: "https://docs.example.com/tensorflow"
     variants:
-      prod:
-        label: "Production"
-        # No version requirement needed - only one version available
-        # version_requirement: ">=2.15.0"  # Could be added when more versions are available
+      - label: "Production"
         deployment:
           compose:
             path: "apps/tensorflow/docker-compose.yml"
@@ -47,25 +46,22 @@ apps:
         - "https://cdn.example.com/screenshots/influxdb-flow.png"
       documentation: "https://docs.example.com/influxdb"
     variants:
-      prod:
-        label: "Production"
-        # No version requirement needed - only one version available
-        # version_requirement: ">=1.10.0"  # Could be added when more versions are available
-        config_templates:
-          production:
-            name: "InfluxDB Production Configuration"
-            description: "Production configuration for InfluxDB"
-            path: "apps/influxdb/prod/config.conf"
+      - label: "Production"
         deployment:
           compose:
             path: "apps/influxdb/docker-compose.yml"
         configuration:
-          configs:
+          files:
             - label: "InfluxDB Configuration File"
               device_path: "/data/influxdb.conf"
               container_path: "/etc/influxdb/influxdb.conf"
-              default_config_ref: "production"
-          vars:
+              templates:
+                production:
+                  name: "InfluxDB Production Configuration"
+                  description: "Production configuration for InfluxDB"
+                  path: "apps/influxdb/prod/config.conf"
+              default: "production"
+          variables:
             - name: "INFLUXDB_ADMIN_PASSWORD"
               label: "InfluxDB Admin Password"
     requirements:
@@ -87,25 +83,23 @@ apps:
         - "https://cdn.example.com/screenshots/grafana-flow.png"
       documentation: "https://docs.example.com/grafana"
     variants:
-      prod:
-        label: "Production"
-        # Production variant requires newer version for enhanced security features
-        version_requirement: ">=11.0.0"  # Requires v11.x for improved authentication and security
-        config_templates:
-          production:
-            name: "Grafana Production Configuration"
-            description: "Production configuration for Grafana"
-            path: "apps/grafana/prod/grafana.ini"
+      - label: "Production"
+        version_requirement: ">=11.0.0"
         deployment:
           compose:
             path: "apps/grafana/docker-compose.yml"
         configuration:
-          configs:
+          files:
             - label: "Grafana Configuration File"
               device_path: "/data/grafana.ini"
               container_path: "/etc/grafana/grafana.ini"
-              default_config_ref: "production"
-          vars:
+              templates:
+                production:
+                  name: "Grafana Production Configuration"
+                  description: "Production configuration for Grafana"
+                  path: "apps/grafana/prod/grafana.ini"
+              default: "production"
+          variables:
             - name: "GF_SECURITY_ADMIN_PASSWORD"
               label: "Grafana Admin Password"
     requirements:
@@ -127,19 +121,8 @@ apps:
         - "https://cdn.example.com/screenshots/node-red-flow.png"
       documentation: "https://docs.example.com/node-red"
     variants:
-      prod:
-        label: "Production"
-        # Production variant requires minimum version for security and performance features
-        version_requirement: ">=3.1.15"  # Requires security patches and performance improvements
-        config_templates:
-          production:
-            name: "Node-RED Production Configuration"
-            description: "Production-ready Node-RED configuration with security and performance optimizations"
-            path: "apps/node-red/prod/config.json"
-          mqtt:
-            name: "Node-RED Production MQTT Configuration"
-            description: "MQTT broker connection settings for production environment"
-            path: "apps/node-red/prod/mqtt.json"
+      - label: "Production"
+        version_requirement: ">=3.1.15"
         deployment:
           compose:
             path: "apps/node-red/docker-compose.yml"
@@ -151,16 +134,26 @@ apps:
             path: "node-red"
             chart: "node-red"
         configuration:
-          configs:
+          files:
             - label: "NodeRed Configuration File"
               device_path: "/data/config.json"
               container_path: "/tmp/config.json"
-              default_config_ref: "production"
+              templates:
+                production:
+                  name: "Node-RED Production Configuration"
+                  description: "Production-ready Node-RED configuration with security and performance optimizations"
+                  path: "apps/node-red/prod/config.json"
+              default: "production"
             - label: "MQTT Configuration"
               device_path: "/data/mqtt.json"
               container_path: "/tmp/mqtt.json"
-              default_config_ref: "mqtt"
-          vars:
+              templates:
+                mqtt:
+                  name: "Node-RED Production MQTT Configuration"
+                  description: "MQTT broker connection settings for production environment"
+                  path: "apps/node-red/prod/mqtt.json"
+              default: "mqtt"
+          variables:
             - name: "MQTT_BROKER"
               label: "MQTT Broker Address"
               default: "mqtt.example.com"
@@ -172,25 +165,23 @@ apps:
               default: "user"
             - name: "MQTT_PASSWORD"
               label: "MQTT Password"
-      test:
-        label: "Testing"
-        # Testing variant uses legacy compatibility - breaks with v4.x due to API changes
-        version_requirement: "<4"  # Only works with v3.x series, breaks in v4.x
-        config_templates:
-          development:
-            name: "Node-RED Development Configuration"
-            description: "Development configuration with debug logging and relaxed security"
-            path: "apps/node-red/test/config.json"
+      - label: "Testing"
+        version_requirement: "<4"
         deployment:
           compose:
             path: "apps/node-red/docker-compose-test.yml"
         configuration:
-          configs:
+          files:
             - label: "NodeRed Configuration File"
               device_path: "/data/config.json"
               container_path: "/tmp/config.json"
-              default_config_ref: "development"
-          vars:
+              templates:
+                development:
+                  name: "Node-RED Development Configuration"
+                  description: "Development configuration with debug logging and relaxed security"
+                  path: "apps/node-red/test/config.json"
+              default: "development"
+          variables:
             - name: "DEBUG_MODE"
               label: "Enable Debug Mode"
               default: "true"
@@ -214,15 +205,8 @@ apps:
         - "https://cdn.example.com/screenshots/mosquitto-flow.png"
       documentation: "https://docs.example.com/mosquitto"
     variants:
-      prod:
-        label: "Production"
-        # Production variant requires recent version with critical bug fixes
-        version_requirement: ">=2.0.19"  # Requires critical security and stability fixes
-        config_templates:
-          production:
-            name: "Mosquitto Production Configuration"
-            description: "Production configuration for Mosquitto broker"
-            path: "apps/mosquitto/prod/mosquitto.conf"
+      - label: "Production"
+        version_requirement: ">=2.0.19"
         deployment:
           compose:
             path: "apps/mosquitto/docker-compose.yml"
@@ -234,12 +218,17 @@ apps:
             path: "mosquitto"
             chart: "mosquitto"
         configuration:
-          configs:
+          files:
             - label: "Mosquitto Configuration File"
               device_path: "/data/mosquitto.conf"
               container_path: "/mosquitto/config/mosquitto.conf"
-              default_config_ref: "production"
-          vars:
+              templates:
+                production:
+                  name: "Mosquitto Production Configuration"
+                  description: "Production configuration for Mosquitto broker"
+                  path: "apps/mosquitto/prod/mosquitto.conf"
+              default: "production"
+          variables:
             - name: "MQTT_PORT"
               label: "MQTT Port"
               default: "1883"
@@ -249,65 +238,62 @@ apps:
             - name: "MQTT_PASSWORD"
               label: "MQTT Password"
               default: "admin"
-      test:
-        label: "Testing"
-        # Testing variant works with all versions for maximum compatibility
-        # No version requirement - supports all available versions
-        config_templates:
-          test:
-            name: "Mosquitto Test Configuration"
-            description: "Test configuration for Mosquitto broker"
-            path: "apps/mosquitto/test/mosquitto.conf"
+      - label: "Testing"
         deployment:
           compose:
             path: "apps/mosquitto/docker-compose.yml"
         configuration:
-          configs:
+          files:
             - label: "Mosquitto Configuration File"
               device_path: "/data/mosquitto.conf"
               container_path: "/mosquitto/config/mosquitto.conf"
-              default_config_ref: "test"
-          vars:
+              templates:
+                test:
+                  name: "Mosquitto Test Configuration"
+                  description: "Test configuration for Mosquitto broker"
+                  path: "apps/mosquitto/test/mosquitto.conf"
+              default: "test"
+          variables:
             - name: "MQTT_PORT"
               label: "MQTT Port"
               default: "1883"
             - name: "MQTT_USERNAME"
               label: "MQTT Username"
-      advanced:
-        label: "Advanced"
-        # Advanced variant requires latest version for enhanced ACL and authentication features
-        version_requirement: ">=2.0.20"  # Requires enhanced ACL and authentication features
-        config_templates:
-          advanced:
-            name: "Mosquitto Advanced Configuration"
-            description: "Advanced configuration with ACL and password files"
-            path: "apps/mosquitto/advanced/mosquitto.conf"
-          password:
-            name: "Mosquitto Password File"
-            description: "Password file for Mosquitto authentication"
-            path: "apps/mosquitto/advanced/mosquitto.password"
-          acl:
-            name: "Mosquitto ACL File"
-            description: "Access control list for Mosquitto"
-            path: "apps/mosquitto/advanced/mosquitto.acl"
+      - label: "Advanced"
+        version_requirement: ">=2.0.20"
         deployment:
           compose:
             path: "apps/mosquitto/docker-compose.yml"
         configuration:
-          configs:
+          files:
             - label: "Mosquitto Configuration File"
               device_path: "/data/mosquitto.conf"
               container_path: "/mosquitto/config/mosquitto.conf"
-              default_config_ref: "advanced"
+              templates:
+                advanced:
+                  name: "Mosquitto Advanced Configuration"
+                  description: "Advanced configuration with ACL and password files"
+                  path: "apps/mosquitto/advanced/mosquitto.conf"
+              default: "advanced"
             - label: "Mosquitto Password File"
               device_path: "/data/mosquitto.password"
               container_path: "/mosquitto/config/mosquitto.password"
-              default_config_ref: "password"
+              templates:
+                password:
+                  name: "Mosquitto Password File"
+                  description: "Password file for Mosquitto authentication"
+                  path: "apps/mosquitto/advanced/mosquitto.password"
+              default: "password"
             - label: "Mosquitto ACL File"
               device_path: "/data/mosquitto.acl"
               container_path: "/mosquitto/config/mosquitto.acl"
-              default_config_ref: "acl"
-          vars:
+              templates:
+                acl:
+                  name: "Mosquitto ACL File"
+                  description: "Access control list for Mosquitto"
+                  path: "apps/mosquitto/advanced/mosquitto.acl"
+              default: "acl"
+          variables:
             - name: "MQTT_PORT"
               label: "MQTT Port"
               default: "1883"
@@ -323,4 +309,3 @@ apps:
     requirements:
       minMemory: "512MB"
       architecture: ["amd64", "arm64"]
-
