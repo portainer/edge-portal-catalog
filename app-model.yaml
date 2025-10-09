@@ -2,14 +2,18 @@
 # This file defines an example of an application template for the Portainer Edge Portal (PEP)
 # It includes metadata, deployment configurations, and runtime settings
 
-# Global catalog metadata
+# Catalog metadata - information about the catalog itself
 metadata:
   # Catalog version for tracking changes and compatibility
   version: "1.0"
   # Last updated timestamp
   updated: "2025-07-18T10:30:00Z"
+
+# Default configuration inherited by all applications
+# These defaults can be overridden at the deployment level (compose/kubernetes/helm)
+defaults:
   # Default source repository for deployment files and configurations
-  # This is inherited by deployments that don't specify their own git repository
+  # When deployments don't specify their own git repository, they inherit these values
   source:
     # Default git repository containing deployment files and configurations
     git: "github.com/your-org/edge-templates"
@@ -58,36 +62,39 @@ apps:
 
     # Application variants - different deployment configurations for the same application
     # Each variant represents a different use case, environment, or configuration
+    # Variant labels should be unique within an application
     variants:
       # Production variant - optimized for production deployments
       # When only one variant exists, it becomes the default and won't show variant selection in UI
-      prod:
-        # Human-readable label for this variant shown in the deployment UI
+      - # REQUIRED: Human-readable label for this variant shown in the deployment UI
+        # This label is used to identify and select the variant
+        # Must be unique within this application's variants
         label: "Production"
 
-        # Version requirement - single constraint using simple operators
+        # OPTIONAL: Version requirement - single constraint using simple operators
         # Supported operators: >=, >, =, <, <= (only ONE constraint per variant)
         # This eliminates conflicting constraints and keeps parsing simple
+        # If omitted, the variant is compatible with all versions listed in metadata.versions
         version_requirement: ">=3.1.15"  # Requires version 3.1.15 or higher
 
         # Deployment configuration - defines how the application is deployed
-        # Git properties are optional - when omitted, files are sourced from metadata.source
+        # Git properties are optional - when omitted, files are sourced from defaults.source
         deployment:
           # Docker Compose deployment option
-          # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
+          # Inherits git/ref from defaults.source (github.com/your-org/edge-templates@main)
           #
           # HOW CONFIGURATION INJECTION WORKS:
           # - The docker-compose.yml file remains unchanged (source of truth in git)
           # - PEP generates a docker-compose.override.yml file on each edge device
           # - Docker Compose automatically merges both files when running `docker compose up`
-          # - Override file contains bind mounts from configuration.files and env vars from configuration.vars
+          # - Override file contains bind mounts from configuration.files and env vars from configuration.variables
           # - See apps/node-red/docker-compose.override.yml for an example of what PEP generates
           compose:
             # Path to the docker-compose.yml file relative to the source repository root
             path: "apps/node-red/docker-compose.yml"
 
           # Kubernetes deployment option (for environments supporting Kubernetes)
-          # Inherits git/ref from metadata.source (github.com/your-org/edge-templates@main)
+          # Inherits git/ref from defaults.source (github.com/your-org/edge-templates@main)
           kubernetes:
             # Path to Kubernetes manifest file relative to the source repository root
             path: "apps/node-red/kubernetes.yaml"
@@ -95,9 +102,9 @@ apps:
           # Helm chart deployment option (for Helm-enabled Kubernetes clusters)
           # This example shows external repository usage for Helm charts
           helm:
-            # External git repository containing the Helm chart (overrides metadata.source)
+            # External git repository containing the Helm chart (overrides defaults.source)
             git: "github.com/your-org/helm-charts"
-            # Git branch or tag to use for the Helm chart (overrides metadata.source.ref)
+            # Git branch or tag to use for the Helm chart (overrides defaults.source.ref)
             ref: "v1.0.0"
             # Path to the Helm chart within the repository (chart name)
             path: "node-red"
@@ -122,7 +129,7 @@ apps:
         #    - Users select from these templates via dropdown in the PEP UI
         #    - Templates can contain ((PEP_*)) placeholders that are replaced with variable values
         #
-        # 3. Variables (vars): User-provided values collected during app installation
+        # 3. Variables: User-provided values collected during app installation
         #    - Used to replace ((PEP_VARIABLE_NAME)) placeholders in template files
         #    - If placeholder exists in template → replaced with the value
         #    - If placeholder NOT found → injected as environment variable VARIABLE_NAME
@@ -157,7 +164,7 @@ apps:
                   # Should explain when to use this template and what it configures
                   description: "Production-ready Node-RED configuration with security and performance optimizations. Recommended for production deployments."
                   # REQUIRED: Path to the template file relative to the source repository root
-                  # This file can contain ((PEP_*)) placeholders that will be replaced with values from vars
+                  # This file can contain ((PEP_*)) placeholders that will be replaced with values from variables
                   path: "apps/node-red/prod/config.json"
 
                 # Alternative template for development environments
@@ -266,7 +273,7 @@ apps:
           # - If placeholder NOT found in template → injected as environment variable VARIABLE_NAME
           # - Variable names should use UPPER_SNAKE_CASE convention
           # - Placeholders in template files use format: ((PEP_VARIABLE_NAME))
-          vars:
+          variables:
             - # REQUIRED: Variable identifier
               # Used in placeholders as ((PEP_MQTT_BROKER)) and as env var MQTT_BROKER
               name: "MQTT_BROKER"
@@ -293,8 +300,7 @@ apps:
 
       # Testing variant - configured for development and testing environments
       # This variant demonstrates simplified configuration with fewer options
-      test:
-        label: "Testing"
+      - label: "Testing"
         version_requirement: "<4.0.0"  # Only v3.x series (3.1.14, 3.1.15)
 
         deployment:
@@ -316,7 +322,7 @@ apps:
                   path: "apps/node-red/test/config.json"
               # Single template - no "default" needed (automatically selected)
 
-          vars:
+          variables:
             - name: "DEBUG_MODE"
               label: "Enable Debug Mode"
               default: "true"
@@ -325,8 +331,7 @@ apps:
               default: "debug"
 
       # Legacy variant - minimal configuration example
-      legacy:
-        label: "Legacy (3.1.14 only)"
+      - label: "Legacy (3.1.14 only)"
         version_requirement: "=3.1.14"
 
         deployment:
@@ -339,8 +344,7 @@ apps:
         # Use this for simple applications that require no custom configuration
 
       # Example: Environment variables only (no configuration files)
-      env_only:
-        label: "Environment Variables Only"
+      - label: "Environment Variables Only"
         version_requirement: ">=3.1.15"
 
         deployment:
@@ -351,7 +355,7 @@ apps:
         # Variables will be injected as environment variables into the container
         # USE CASE: Applications that are configured entirely via environment variables
         configuration:
-          vars:
+          variables:
             - name: "NODE_ENV"
               label: "Node Environment"
               default: "production"

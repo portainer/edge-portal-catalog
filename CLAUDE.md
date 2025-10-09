@@ -19,21 +19,29 @@ This is the **edge-portal-catalog** repository for Portainer Edge Portal (PEP). 
 The catalog defines applications with a hierarchical structure:
 
 ```
-metadata (global)
-└── apps
-    └── [app-id]
-        ├── metadata (app-specific)
-        └── variants (e.g., prod, test, legacy, advanced)
+metadata (catalog info)
+├── version
+└── updated
+
+defaults (inherited config)
+└── source
+    ├── git
+    └── ref
+
+apps
+└── [app-id]
+    ├── metadata (app-specific)
+    └── variants (list)
+        └── [variant]
             ├── label
             ├── version_requirement
-            ├── config_templates
             ├── deployment
             │   ├── compose
             │   ├── kubernetes
             │   └── helm
             ├── configuration
-            │   ├── configs
-            │   └── vars
+            │   ├── files
+            │   └── variables
             └── requirements
 ```
 
@@ -48,7 +56,7 @@ Version requirements use single-constraint operators:
 
 The system uses `((PEP_*))` placeholders for dynamic value injection:
 - `((PEP_IMAGE_VERSION))`: Replaced with user-selected application version
-- `((PEP_VARIABLE_NAME))`: Replaced with variable values from `configuration.vars`
+- `((PEP_VARIABLE_NAME))`: Replaced with variable values from `configuration.variables`
 - If placeholder exists in config file: replaced with the value
 - If placeholder NOT found: injected as environment variable
 
@@ -70,10 +78,10 @@ Example in config template (apps/node-red/prod/mqtt.json):
 ### Git Source Inheritance
 
 Deployment files can be sourced from git repositories:
-- Global default defined in `metadata.source` (git + ref)
+- Global default defined in `defaults.source` (git + ref)
 - Inherited by all deployments unless overridden
 - Can be overridden at deployment level (compose/kubernetes/helm)
-- Example: `metadata.source.git: "github.com/your-org/edge-templates"`
+- Example: `defaults.source.git: "github.com/your-org/edge-templates"`
 
 ### Configuration System
 
@@ -90,7 +98,7 @@ When present, the configuration system consists of two main components:
 - Each file has inline `templates` (a dict of configuration file options):
   - **Template properties (all required)**: `name`, `description`, `path`
   - Users select from these templates via dropdown in PEP UI
-  - Templates contain `((PEP_*))` placeholders replaced with values from `vars`
+  - Templates contain `((PEP_*))` placeholders replaced with values from `variables`
 - **Default selection**: `default` property (optional)
   - If omitted with multiple templates: first template in YAML order is selected
   - If only one template exists: automatically selected (no dropdown)
@@ -106,7 +114,7 @@ When present, the configuration system consists of two main components:
   - Use case: files managed outside of PEP (operator-placed, shared configs, etc.)
 - PEP handles: file propagation to devices, bind mounts, volume management
 
-#### 2. Variables (`configuration.vars`)
+#### 2. Variables (`configuration.variables`)
 - User-provided values collected during app installation
 - **Two usage modes:**
   - **With `files` section**: Replace `((PEP_VARIABLE_NAME))` placeholders in template files
@@ -123,8 +131,7 @@ When present, the configuration system consists of two main components:
 # Omit configuration section entirely
 # PEP UI will skip the configuration wizard step
 variants:
-  prod:
-    label: "Production"
+  - label: "Production"
     deployment:
       compose:
         path: "apps/simple-app/docker-compose.yml"
@@ -132,8 +139,7 @@ variants:
 
 # Full configuration: files with multiple templates + variables
 variants:
-  prod:
-    label: "Production"
+  - label: "Production"
     configuration:
       files:
         - label: "App Config"
@@ -149,14 +155,13 @@ variants:
               description: "Debug mode enabled"
               path: "apps/myapp/dev/config.json"
           default: "production"
-      vars:
+      variables:
         - name: "API_KEY"
           label: "API Key"
 
 # Single template (locked configuration)
 variants:
-  prod:
-    label: "Production"
+  - label: "Production"
     configuration:
       files:
         - label: "Security Policy"
@@ -171,10 +176,9 @@ variants:
 
 # Variables only (environment variables, no config files)
 variants:
-  prod:
-    label: "Production"
+  - label: "Production"
     configuration:
-      vars:
+      variables:
         - name: "LOG_LEVEL"
           label: "Log Level"
           default: "info"
@@ -182,8 +186,7 @@ variants:
 # Mount existing device file (no templates)
 # File must already exist on device before container starts
 variants:
-  prod:
-    label: "Production"
+  - label: "Production"
     configuration:
       files:
         - label: "SSL Certificate"
@@ -197,12 +200,13 @@ variants:
 
 When modifying YAML files, ensure:
 - Version requirements use single operators only (not ranges like `>=1.0.0 <2.0.0`)
+- Variant labels are unique within an application
 - All template `path` properties reference actual files in the `apps/` directory
 - Template properties `name`, `description`, and `path` are all present (required)
 - `default` property (if present) matches a key in the `templates` dict
 - If multiple templates exist and no `default` is specified, the first template will be selected
 - Empty `templates: {}` is treated same as omitted (no validation error, but omitting is preferred)
-- Variable names in `configuration.vars` match placeholders in template files (with `PEP_` prefix)
+- Variable names in `configuration.variables` match placeholders in template files (with `PEP_` prefix)
 - All git references use format: `github.com/org/repo` (no https://)
 
 ## Common Tasks
@@ -219,11 +223,12 @@ When modifying YAML files, ensure:
 
 ### Adding a New Variant
 
-1. Add variant under `apps.[app-id].variants`
-2. Define `label` and optionally `version_requirement`
-3. Define deployment sources (can reuse same files as other variants)
-4. (Optional) Add `configuration.files` with inline templates if needed
-5. (Optional) Define `configuration.vars` for variables/placeholders
+1. Add new list item to `apps.[app-id].variants` array
+2. Define `label` (required, must be unique within the app)
+3. (Optional) Define `version_requirement` if version constraints needed
+4. Define deployment sources (can reuse same files as other variants)
+5. (Optional) Add `configuration.files` with inline templates if needed
+6. (Optional) Define `configuration.variables` for variables/placeholders
 
 ### Adding Configuration Templates to a File
 
@@ -238,7 +243,7 @@ When modifying YAML files, ensure:
    ```
 3. Create the template file in `apps/[app-id]/`
 4. Use `((PEP_VARIABLE_NAME))` syntax for dynamic values
-5. Ensure matching variables are defined in `configuration.vars`
+5. Ensure matching variables are defined in `configuration.variables`
 6. (Optional) Update `default` property if this should be the default template
 
 ## Docker Compose Override File Pattern
@@ -253,7 +258,7 @@ PEP uses the standard Docker Compose override file pattern to inject runtime con
 
 **What PEP injects into override files:**
 - Volume bind mounts from `configuration.files` entries
-- Environment variables from `configuration.vars` entries
+- Environment variables from `configuration.variables` entries
 - Device-specific runtime configuration
 
 **Example:** See `apps/node-red/docker-compose.override.yml` for a comprehensive example showing what PEP generates based on catalog configuration.
