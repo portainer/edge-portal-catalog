@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is the **edge-portal-catalog** repository for Portainer Edge Portal (PEP). It defines an application catalog for deploying containerized applications to edge devices. The catalog uses YAML-based configuration files to specify application metadata, deployment options, and runtime configurations.
+This is the **industrial-app-portal-catalog** repository for Portainer Industrial App Portal (PIAP). It defines an application catalog for deploying containerized applications to edge devices. The catalog uses YAML-based configuration files to specify application metadata, deployment options, and runtime configurations.
 
 ## Key Files
 
@@ -54,23 +54,23 @@ Version requirements use single-constraint operators:
 
 ### Placeholder System
 
-The system uses `((PEP_*))` placeholders for dynamic value injection:
-- `((PEP_IMAGE_VERSION))`: Replaced with user-selected application version
-- `((PEP_VARIABLE_NAME))`: Replaced with variable values from `configuration.variables`
+The system uses `((PIAP_*))` placeholders for dynamic value injection:
+- `((PIAP_IMAGE_VERSION))`: Replaced with user-selected application version
+- `((PIAP_VARIABLE_NAME))`: Replaced with variable values from `configuration.variables`
 - If placeholder exists in config file: replaced with the value
 - If placeholder NOT found: injected as environment variable
 
 Example in docker-compose.yml:
 ```yaml
-image: nodered/node-red:((PEP_IMAGE_VERSION))
+image: nodered/node-red:((PIAP_IMAGE_VERSION))
 ```
 
 Example in config template (apps/node-red/prod/mqtt.json):
 ```json
 {
-  "broker": "((PEP_MQTT_BROKER))",
+  "broker": "((PIAP_MQTT_BROKER))",
   "credentials": {
-    "user": "((PEP_MQTT_USERNAME))"
+    "user": "((PIAP_MQTT_USERNAME))"
   }
 }
 ```
@@ -85,20 +85,20 @@ Deployment files can be sourced from git repositories:
 
 ### Configuration System
 
-The `configuration` section is **optional**. If omitted entirely, the PEP UI will skip the configuration step in the deployment wizard and proceed to the next step. Use this for simple applications that require no custom configuration.
+The `configuration` section is **optional**. If omitted entirely, the PIAP UI will skip the configuration step in the deployment wizard and proceed to the next step. Use this for simple applications that require no custom configuration.
 
 When present, the configuration system consists of two main components:
 
 #### 1. Configuration Files (`configuration.files`)
 - **Central definition of HOW configuration files are injected into containers**
 - List of file mount points with their template options
-- Defines the bind mount mappings that PEP will automatically create:
+- Defines the bind mount mappings that PIAP will automatically create:
   - `device_path`: Where the config file is stored on the edge device
   - `container_path`: Where the config file is mounted inside the container
 - Each file has inline `templates` (a dict of configuration file options):
   - **Template properties (all required)**: `name`, `description`, `path`
-  - Users select from these templates via dropdown in PEP UI
-  - Templates contain `((PEP_*))` placeholders replaced with values from `variables`
+  - Users select from these templates via dropdown in PIAP UI
+  - Templates contain `((PIAP_*))` placeholders replaced with values from `variables`
 - **Default selection**: `default` property (optional)
   - If omitted with multiple templates: first template in YAML order is selected
   - If only one template exists: automatically selected (no dropdown)
@@ -111,17 +111,17 @@ When present, the configuration system consists of two main components:
   - Omit `templates` section entirely → bind mount files already on device (e.g., certificates, keys)
   - Lenient parsing: `templates: {}` (empty dict) also accepted, treated same as omitted
   - Preferred syntax: omit `templates` for clarity
-  - Use case: files managed outside of PEP (operator-placed, shared configs, etc.)
-- PEP handles: file propagation to devices, bind mounts, volume management
+  - Use case: files managed outside of PIAP (operator-placed, shared configs, etc.)
+- PIAP handles: file propagation to devices, bind mounts, volume management
 
 #### 2. Variables (`configuration.variables`)
 - User-provided values collected during app installation
 - **Two usage modes:**
-  - **With `files` section**: Replace `((PEP_VARIABLE_NAME))` placeholders in template files
+  - **With `files` section**: Replace `((PIAP_VARIABLE_NAME))` placeholders in template files
   - **Standalone (without `files`)**: Injected as environment variables only
 - Can have default values pre-filled in the installation form
 - Processing logic:
-  - If placeholder `((PEP_VARIABLE_NAME))` exists in template file → replaced with the value
+  - If placeholder `((PIAP_VARIABLE_NAME))` exists in template file → replaced with the value
   - If placeholder NOT found → injected as environment variable `VARIABLE_NAME`
 
 **Example Combinations:**
@@ -129,7 +129,7 @@ When present, the configuration system consists of two main components:
 ```yaml
 # No configuration needed (simplest case)
 # Omit configuration section entirely
-# PEP UI will skip the configuration wizard step
+# PIAP UI will skip the configuration wizard step
 variants:
   - label: "Production"
     deployment:
@@ -206,7 +206,7 @@ When modifying YAML files, ensure:
 - `default` property (if present) matches a key in the `templates` dict
 - If multiple templates exist and no `default` is specified, the first template will be selected
 - Empty `templates: {}` is treated same as omitted (no validation error, but omitting is preferred)
-- Variable names in `configuration.variables` match placeholders in template files (with `PEP_` prefix)
+- Variable names in `configuration.variables` match placeholders in template files (with `PIAP_` prefix)
 - All git references use format: `github.com/org/repo` (no https://)
 
 ## Common Tasks
@@ -242,31 +242,31 @@ When modifying YAML files, ensure:
        path: "apps/[app-id]/path/to/template.json"
    ```
 3. Create the template file in `apps/[app-id]/`
-4. Use `((PEP_VARIABLE_NAME))` syntax for dynamic values
+4. Use `((PIAP_VARIABLE_NAME))` syntax for dynamic values
 5. Ensure matching variables are defined in `configuration.variables`
 6. (Optional) Update `default` property if this should be the default template
 
 ## Docker Compose Override File Pattern
 
-PEP uses the standard Docker Compose override file pattern to inject runtime configuration without modifying the source `docker-compose.yml` files.
+PIAP uses the standard Docker Compose override file pattern to inject runtime configuration without modifying the source `docker-compose.yml` files.
 
 **How it works:**
 1. Original `docker-compose.yml` remains unchanged in git (source of truth)
-2. PEP generates `docker-compose.override.yml` on each edge device
+2. PIAP generates `docker-compose.override.yml` on each edge device
 3. Docker Compose automatically merges both files at runtime
 4. Override file contains device-specific bind mounts and environment variables
 
-**What PEP injects into override files:**
+**What PIAP injects into override files:**
 - Volume bind mounts from `configuration.files` entries
 - Environment variables from `configuration.variables` entries
 - Device-specific runtime configuration
 
-**Example:** See `apps/node-red/docker-compose.override.yml` for a comprehensive example showing what PEP generates based on catalog configuration.
+**Example:** See `apps/node-red/docker-compose.override.yml` for a comprehensive example showing what PIAP generates based on catalog configuration.
 
 **Benefits:**
 - Source files remain clean and unchanged
 - Standard Docker Compose pattern (well-documented)
-- Easy debugging: inspect override file to see what PEP added
+- Easy debugging: inspect override file to see what PIAP added
 - Clear separation: base config in git, runtime config in override
 
 **Note:** This pattern is currently used for Docker Compose deployments. Kubernetes and Helm will use platform-native patterns (ConfigMaps, Secrets, Values) when support is added.
@@ -275,8 +275,8 @@ PEP uses the standard Docker Compose override file pattern to inject runtime con
 
 This repository contains configuration files only. Testing typically involves:
 - YAML syntax validation
-- Schema validation against PEP requirements
-- Integration testing with actual PEP deployment (out of scope for this repo)
+- Schema validation against PIAP requirements
+- Integration testing with actual PIAP deployment (out of scope for this repo)
 
 ## Reference
 

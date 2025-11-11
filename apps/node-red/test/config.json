@@ -4,6 +4,6 @@
     "ui": {
       "path": "ui"
     },
-    "debug": "((PEP_DEBUG_MODE))"
+    "debug": "((PIAP_DEBUG_MODE))"
   }
   

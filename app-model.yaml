@@ -1,5 +1,5 @@
 # Application Model Definition
-# This file defines an example of an application template for the Portainer Edge Portal (PEP)
+# This file defines an example of an application template for the Portainer Industrial App Portal (PIAP)
 # It includes metadata, deployment configurations, and runtime settings
 
 # Catalog metadata - information about the catalog itself
@@ -24,7 +24,7 @@ apps:
   node-red:
     # Application metadata - describes the application for users browsing the catalog
     metadata:
-      # Display name shown in the application catalog and across the Edge Portal
+      # Display name shown in the application catalog and across the Industrial App Portal
       name: "Node-RED"
 
       # Brief one-line description that appears in catalog listings
@@ -38,7 +38,7 @@ apps:
       publisher: "OpenJS Foundation"
 
       # Available application versions that can be deployed
-      # The ((PEP_IMAGE_VERSION)) placeholder in deployment files will be automatically
+      # The ((PIAP_IMAGE_VERSION)) placeholder in deployment files will be automatically
       # replaced with the user-selected version from this list
       versions: ["3.1.14", "3.1.15", "4.0.9"]
 
@@ -85,10 +85,10 @@ apps:
           #
           # HOW CONFIGURATION INJECTION WORKS:
           # - The docker-compose.yml file remains unchanged (source of truth in git)
-          # - PEP generates a docker-compose.override.yml file on each edge device
+          # - PIAP generates a docker-compose.override.yml file on each edge device
           # - Docker Compose automatically merges both files when running `docker compose up`
           # - Override file contains bind mounts from configuration.files and env vars from configuration.variables
-          # - See apps/node-red/docker-compose.override.yml for an example of what PEP generates
+          # - See apps/node-red/docker-compose.override.yml for an example of what PIAP generates
           compose:
             # Path to the docker-compose.yml file relative to the source repository root
             path: "apps/node-red/docker-compose.yml"
@@ -114,47 +114,47 @@ apps:
         # Runtime configuration system for device-specific and location-specific settings
         #
         # OPTIONAL: This entire section can be omitted for simple applications that don't need
-        # any custom configuration. When omitted, the PEP UI will skip the configuration wizard
+        # any custom configuration. When omitted, the PIAP UI will skip the configuration wizard
         # step entirely and proceed directly to deployment.
         #
         # KEY CONCEPTS:
         # 1. Configuration Files (files): Define bind mount mappings for configuration files
         #    - Specifies WHERE files are stored on device (device_path)
         #    - Specifies WHERE files are mounted in container (container_path)
-        #    - PEP automatically handles file propagation, bind mounts, and volume management
+        #    - PIAP automatically handles file propagation, bind mounts, and volume management
         #    - Each file can have multiple template options for users to select from
         #
         # 2. Templates: Pre-defined configuration file options stored in the catalog repository
         #    - Defined inline within each file entry (scoped to that specific mount point)
-        #    - Users select from these templates via dropdown in the PEP UI
-        #    - Templates can contain ((PEP_*)) placeholders that are replaced with variable values
+        #    - Users select from these templates via dropdown in the PIAP UI
+        #    - Templates can contain ((PIAP_*)) placeholders that are replaced with variable values
         #
         # 3. Variables: User-provided values collected during app installation
-        #    - Used to replace ((PEP_VARIABLE_NAME)) placeholders in template files
+        #    - Used to replace ((PIAP_VARIABLE_NAME)) placeholders in template files
         #    - If placeholder exists in template → replaced with the value
         #    - If placeholder NOT found → injected as environment variable VARIABLE_NAME
         #    - Can be used standalone (without files) for environment-only configuration
         configuration:
           # Configuration files to be mounted into the container
           # This is a list of file mount points, each with its own template options
-          # The order in this list determines the display order in the PEP UI
+          # The order in this list determines the display order in the PIAP UI
           files:
             # First file mount: Application main configuration
-            - # User-friendly label shown in the PEP UI for this configuration file
+            - # User-friendly label shown in the PIAP UI for this configuration file
               label: "Application Configuration"
 
               # Path on the edge device where this config file will be stored
-              # PEP manages this location and ensures the file exists before container starts
+              # PIAP manages this location and ensures the file exists before container starts
               device_path: "/data/config.json"
 
               # Path inside the container where this config file will be mounted
-              # PEP automatically creates the bind mount: -v device_path:container_path
+              # PIAP automatically creates the bind mount: -v device_path:container_path
               # If omitted, device_path will be used (e.g., -v /data/config.json:/data/config.json)
               container_path: "/tmp/config.json"
 
               # Template options for this specific configuration file
               # This is a dictionary where each key is a template identifier
-              # Users will see these options in a dropdown in the PEP UI
+              # Users will see these options in a dropdown in the PIAP UI
               templates:
                 # Template identifier: used internally and as the value for "default" property
                 production:
@@ -164,7 +164,7 @@ apps:
                   # Should explain when to use this template and what it configures
                   description: "Production-ready Node-RED configuration with security and performance optimizations. Recommended for production deployments."
                   # REQUIRED: Path to the template file relative to the source repository root
-                  # This file can contain ((PEP_*)) placeholders that will be replaced with values from variables
+                  # This file can contain ((PIAP_*)) placeholders that will be replaced with values from variables
                   path: "apps/node-red/prod/config.json"
 
                 # Alternative template for development environments
@@ -239,9 +239,9 @@ apps:
 
             # EDGE CASE: Mounting files that already exist on the device
             #
-            # When the templates section is OMITTED entirely, PEP will NOT provide any default file
+            # When the templates section is OMITTED entirely, PIAP will NOT provide any default file
             # The file must already exist at device_path before the container starts
-            # PEP will only create the bind mount, not manage the file content
+            # PIAP will only create the bind mount, not manage the file content
             #
             # USE CASES:
             # - Mounting certificates or keys placed by operators
@@ -265,17 +265,17 @@ apps:
           # Variables for dynamic configuration replacement and environment injection
           #
           # USAGE MODES:
-          # 1. With "files" section: Replace ((PEP_VARIABLE_NAME)) placeholders in template files
+          # 1. With "files" section: Replace ((PIAP_VARIABLE_NAME)) placeholders in template files
           # 2. Standalone (without "files"): Inject as environment variables only
           #
           # PROCESSING LOGIC:
-          # - If placeholder ((PEP_VARIABLE_NAME)) exists in template file → replaced with value
+          # - If placeholder ((PIAP_VARIABLE_NAME)) exists in template file → replaced with value
           # - If placeholder NOT found in template → injected as environment variable VARIABLE_NAME
           # - Variable names should use UPPER_SNAKE_CASE convention
-          # - Placeholders in template files use format: ((PEP_VARIABLE_NAME))
+          # - Placeholders in template files use format: ((PIAP_VARIABLE_NAME))
           variables:
             - # REQUIRED: Variable identifier
-              # Used in placeholders as ((PEP_MQTT_BROKER)) and as env var MQTT_BROKER
+              # Used in placeholders as ((PIAP_MQTT_BROKER)) and as env var MQTT_BROKER
               name: "MQTT_BROKER"
 
               # REQUIRED: User-friendly label shown in the app installation form
@@ -340,7 +340,7 @@ apps:
             ref: "legacy"
             path: "docker-compose.yml"
 
-        # No configuration section - PEP UI will skip configuration wizard step
+        # No configuration section - PIAP UI will skip configuration wizard step
         # Use this for simple applications that require no custom configuration
 
       # Example: Environment variables only (no configuration files)

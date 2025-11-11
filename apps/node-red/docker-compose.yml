@@ -2,8 +2,8 @@ version: "3.8"
 
 services:
   nodered:
-    # PEP replaces ((PEP_IMAGE_VERSION)) with user-selected version before deployment
-    image: nodered/node-red:((PEP_IMAGE_VERSION))
+    # PIAP replaces ((PIAP_IMAGE_VERSION)) with user-selected version before deployment
+    image: nodered/node-red:((PIAP_IMAGE_VERSION))
     container_name: nodered
     restart: unless-stopped
     ports:
@@ -12,7 +12,7 @@ services:
       - TZ=UTC
     # Named volume for persistent Node-RED data
     # Configuration file bind mounts are added via docker-compose.override.yml
-    # See: apps/node-red/docker-compose.override.yml for example of PEP-generated overrides
+    # See: apps/node-red/docker-compose.override.yml for example of PIAP-generated overrides
     volumes:
       - nodered_data:/data
 
