@@ -1,5 +1,5 @@
 # Application Model Definition
-# This file defines an example of an application template for the Portainer Edge Portal (PEP)
+# This file defines an example of an application template for the Portainer Industrial App Portal (PEP)
 # It includes metadata, deployment configurations, and runtime settings
 
 # Catalog metadata - information about the catalog itself
@@ -24,7 +24,7 @@ apps:
   node-red:
     # Application metadata - describes the application for users browsing the catalog
     metadata:
-      # Display name shown in the application catalog and across the Edge Portal
+      # Display name shown in the application catalog and across the Industrial App Portal
       name: "Node-RED"
 
       # Brief one-line description that appears in catalog listings

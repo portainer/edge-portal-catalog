@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is the **edge-portal-catalog** repository for Portainer Edge Portal (PEP). It defines an application catalog for deploying containerized applications to edge devices. The catalog uses YAML-based configuration files to specify application metadata, deployment options, and runtime configurations.
+This is the **industrial-app-portal-catalog** repository for Portainer Industrial App Portal (PEP). It defines an application catalog for deploying containerized applications to edge devices. The catalog uses YAML-based configuration files to specify application metadata, deployment options, and runtime configurations.
 
 ## Key Files
 
