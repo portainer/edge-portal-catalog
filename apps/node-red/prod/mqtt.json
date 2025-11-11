@@ -1,8 +1,8 @@
 {
     "type": "mqtt-broker",
     "name": "Production MQTT Broker",
-    "broker": "((PEP_MQTT_BROKER))",
-    "port": "((PEP_MQTT_PORT))",
+    "broker": "((PIAP_MQTT_BROKER))",
+    "port": "((PIAP_MQTT_PORT))",
     "clientid": "",
     "usetls": false,
     "compatmode": false,
@@ -18,8 +18,8 @@
     "willQos": "0",
     "willPayload": "",
     "credentials": {
-      "user": "((PEP_MQTT_USERNAME))",
-      "password": "((PEP_MQTT_PASSWORD))"
+      "user": "((PIAP_MQTT_USERNAME))",
+      "password": "((PIAP_MQTT_PASSWORD))"
     }
   }
   
