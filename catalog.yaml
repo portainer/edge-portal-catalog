@@ -1,10 +1,10 @@
 metadata:
-  version: "2.0"
+  version: "1.0"
   updated: "2025-11-12T00:00:00Z"
 
 defaults:
   source:
-    git: "github.com/portainer/templates"
+    git: "github.com/portainer/industrial-app-portal-catalog"
     ref: "master"
 
 apps:
