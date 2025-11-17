@@ -14,7 +14,7 @@ apps:
       description: "Low-code programming for event-driven applications"
       overview: "Node-RED is a flow-based development tool for visual programming developed originally by IBM for wiring together hardware devices, APIs and online services as part of the Internet of Things. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
       publisher: "OpenJS Foundation"
-      versions: ["latest"]
+      versions: ["4.1.1"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/nodered/200/200"
       tags: ["automation", "low-code", "iot", "mqtt"]
@@ -42,7 +42,7 @@ apps:
       description: "Analytics and interactive visualization platform"
       overview: "Grafana is a multi-platform open source analytics and interactive visualization web application. It provides charts, graphs, and alerts for the web when connected to supported data sources. It is expandable through a plug-in system and is commonly used for visualizing time series data for infrastructure and application analytics."
       publisher: "Grafana Labs"
-      versions: ["latest"]
+      versions: ["12.2.1"]
       category: "visualization"
       icon: "https://picsum.photos/seed/grafana/200/200"
       tags: ["visualization", "monitoring", "dashboards", "analytics"]
@@ -66,49 +66,13 @@ apps:
       minMemory: "512MB"
       architecture: ["amd64", "arm64"]
 
-  influxdb:
-    metadata:
-      name: "InfluxDB"
-      description: "Time-series database for metrics and events"
-      overview: "InfluxDB is an open-source time series database developed by InfluxData. It is written in Go and optimized for fast, high-availability storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics."
-      publisher: "InfluxData"
-      versions: ["2.5.1"]
-      category: "database"
-      icon: "https://picsum.photos/seed/influxdb/200/200"
-      tags: ["database", "time-series", "metrics", "iot"]
-      screenshots:
-        - "https://picsum.photos/seed/influxdb1/800/600"
-        - "https://picsum.photos/seed/influxdb2/800/600"
-      documentation: "https://docs.influxdata.com/influxdb/"
-    variants:
-      - label: "Production"
-        deployment:
-          compose:
-            path: "edge/influxdb/docker-compose.yml"
-        configuration:
-          variables:
-            - name: "influxadmin"
-              label: "Admin Username"
-              default: "admin"
-            - name: "influxadminpass"
-              label: "Admin Password"
-            - name: "influxorg"
-              label: "Organization Name"
-              default: "myorg"
-            - name: "influxbucket"
-              label: "Initial Bucket Name"
-              default: "mybucket"
-    requirements:
-      minMemory: "512MB"
-      architecture: ["amd64", "arm64"]
-
   timescaledb:
     metadata:
       name: "TimescaleDB"
       description: "PostgreSQL database optimized for time-series data"
       overview: "TimescaleDB is an open-source time-series SQL database optimized for fast ingest and complex queries. It is engineered up from PostgreSQL and packaged as a PostgreSQL extension, providing automatic partitioning across time and space, while retaining the standard PostgreSQL interface."
       publisher: "Timescale"
-      versions: ["pg14-latest"]
+      versions: ["2.23.1-pg17"]
       category: "database"
       icon: "https://picsum.photos/seed/timescaledb/200/200"
       tags: ["database", "time-series", "postgresql", "sql"]
@@ -135,7 +99,7 @@ apps:
       description: "Scalable distributed MQTT broker for IoT"
       overview: "EMQX is the world's most scalable and popular MQTT messaging broker. It supports 100M+ IoT devices connections per cluster, with 1M messages per second throughput and sub-millisecond latency. EMQX provides MQTT 5.0 and 3.x protocol support, along with WebSocket, CoAP, and LwM2M for device connectivity."
       publisher: "EMQ Technologies"
-      versions: ["5.5.0"]
+      versions: ["6.0.1"]
       category: "messaging"
       icon: "https://picsum.photos/seed/emqx/200/200"
       tags: ["mqtt", "broker", "messaging", "iot"]
@@ -159,13 +123,42 @@ apps:
       minMemory: "512MB"
       architecture: ["amd64", "arm64"]
 
+  cedalo-mosquitto:
+    metadata:
+      name: "Cedalo Mosquitto"
+      description: "Commercial MQTT broker"
+      overview: "Commercial-grade Eclipse Mosquitto MQTT broker. This enterprise version provides a professional, high-performance MQTT broker with advanced features for reliable messaging in industrial and IoT environments. Supports MQTT 5.0 and 3.x protocols with enhanced security and scalability."
+      publisher: "Cedalo"
+      versions: ["2.8"]
+      category: "messaging"
+      icon: "https://picsum.photos/seed/cedalo-broker/200/200"
+      tags: ["mqtt", "broker", "messaging"]
+      screenshots:
+        - "https://picsum.photos/seed/cedalo-broker1/800/600"
+        - "https://picsum.photos/seed/cedalo-broker2/800/600"
+      documentation: "https://cedalo.com/docs/"
+    variants:
+      - label: "Production"
+        deployment:
+          compose:
+            path: "edge/cedalo-mosquitto/docker-compose.yml"
+        configuration:
+          variables:
+            - name: "CEDALO_LICENSE_KEY"
+              label: "License Key"
+            - name: "CEDALO_MOSQUITTO_PASSWORD"
+              label: "Mosquitto Password"
+    requirements:
+      minMemory: "256MB"
+      architecture: ["amd64"]
+
   cedalo-mosquitto-mc:
     metadata:
       name: "Cedalo Mosquitto with Management Center"
       description: "Commercial MQTT broker with web-based management"
       overview: "Commercial-grade Eclipse Mosquitto MQTT broker with Cedalo Management Center. This enterprise version provides a professional MQTT broker with an intuitive web-based management interface for configuring brokers, monitoring connections, managing clients, and analyzing message flows in real-time."
       publisher: "Cedalo"
-      versions: ["latest"]
+      versions: ["2.8"]
       category: "messaging"
       icon: "https://picsum.photos/seed/cedalo/200/200"
       tags: ["mqtt", "broker", "messaging", "management"]
@@ -199,7 +192,7 @@ apps:
       description: "No-code middleware for industrial applications"
       overview: "OPC Router is a powerful middleware solution that enables seamless data exchange between industrial automation systems, databases, cloud platforms, and enterprise applications. With its no-code approach, you can create complex data flows and integrations through an intuitive graphical interface without programming knowledge."
       publisher: "inray Industriesoftware GmbH"
-      versions: ["latest"]
+      versions: ["5.5"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/opcrouter/200/200"
       tags: ["opc", "middleware", "integration", "automation"]
@@ -232,7 +225,7 @@ apps:
       description: "Automated data flow and transformation platform"
       overview: "Apache NiFi is an easy-to-use, powerful, and reliable system to process and distribute data. It supports powerful and scalable directed graphs of data routing, transformation, and system mediation logic. NiFi provides real-time control that makes it easy to manage the movement of data between any source and any destination."
       publisher: "Apache Software Foundation"
-      versions: ["1.22.0"]
+      versions: ["2.6.0"]
       category: "data-processing"
       icon: "https://picsum.photos/seed/nifi/200/200"
       tags: ["data-flow", "etl", "integration", "automation"]
@@ -262,7 +255,7 @@ apps:
       description: "Industrial SCADA and MES platform"
       overview: "Ignition is a powerful industrial application platform with fully integrated development tools for building SCADA, MES, and IIoT solutions. It provides unlimited tags, clients, and connections with a single server license. The platform features cross-platform compatibility, real-time data visualization, and extensive protocol support including OPC-UA."
       publisher: "Inductive Automation"
-      versions: ["8.1.8"]
+      versions: ["8.3.1"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/ignition/200/200"
       tags: ["scada", "mes", "hmi", "automation"]
@@ -320,66 +313,13 @@ apps:
       minMemory: "1GB"
       architecture: ["amd64", "arm64"]
 
-  litmus-edge-dfd:
-    metadata:
-      name: "Litmus Edge Demo with Data Factory"
-      description: "Litmus Edge platform with demo environment"
-      overview: "Full Litmus Edge demonstration environment including simulation servers, database integrations (MS SQL, MySQL), Grafana dashboards, and pre-configured data flows. This complete stack provides a ready-to-use environment for evaluating Litmus Edge capabilities with sample data sources and visualization."
-      publisher: "Litmus Automation"
-      versions: ["latest"]
-      category: "industrial-automation"
-      icon: "https://picsum.photos/seed/litmusdfd/200/200"
-      tags: ["edge-platform", "demo", "data-factory", "industrial"]
-      screenshots:
-        - "https://picsum.photos/seed/litmusdfd1/800/600"
-        - "https://picsum.photos/seed/litmusdfd2/800/600"
-      documentation: "https://www.litmus.io/documentation/"
-    variants:
-      - label: "Production"
-        deployment:
-          compose:
-            path: "edge/litmusedge_dfd/docker-compose.yml"
-    requirements:
-      minMemory: "4GB"
-      architecture: ["amd64", "arm64"]
-
-  manubes-edge-node:
-    metadata:
-      name: "Manubes Edge Node"
-      description: "Cloud platform for production management"
-      overview: "Manubes Edge Node is a high-performance cloud platform designed for industrial production management. It provides a no-code solution for monitoring and managing production data, enabling real-time visibility into manufacturing operations, equipment status, and production metrics with seamless cloud connectivity."
-      publisher: "inray Industriesoftware GmbH"
-      versions: ["latest"]
-      category: "industrial-automation"
-      icon: "https://picsum.photos/seed/manubes/200/200"
-      tags: ["production-management", "manufacturing", "cloud", "monitoring"]
-      screenshots:
-        - "https://picsum.photos/seed/manubes1/800/600"
-        - "https://picsum.photos/seed/manubes2/800/600"
-      documentation: "https://www.manubes.io/documentation/"
-    variants:
-      - label: "Production"
-        deployment:
-          compose:
-            path: "edge/inray-manubes-edge-node/docker-compose.yml"
-        configuration:
-          variables:
-            - name: "MANUBES_SECRET"
-              label: "Manubes Secret Key"
-            - name: "ACCEPT_EULA"
-              label: "Accept EULA (true/false)"
-              default: "false"
-    requirements:
-      minMemory: "512MB"
-      architecture: ["amd64"]
-
   anyviz:
     metadata:
       name: "Anyviz Cloud Adapter"
       description: "Secure remote access for industrial devices"
       overview: "Anyviz Cloud Adapter provides secure, bidirectional remote access to industrial devices and networks. It creates encrypted VPN tunnels for safe connectivity to PLCs, HMIs, and other industrial equipment without requiring public IP addresses or complex firewall configurations. Ideal for remote monitoring, maintenance, and support."
       publisher: "Anyviz"
-      versions: ["latest"]
+      versions: ["2.1.2.0"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/anyviz/200/200"
       tags: ["remote-access", "vpn", "connectivity", "security"]
@@ -402,7 +342,7 @@ apps:
       description: "Modbus to OPC UA and MQTT gateway"
       overview: "Softing edgeConnector Modbus enables seamless connectivity between Modbus TCP devices (sensors, PLCs) and modern industrial protocols. It aggregates Modbus data and exposes it via standardized OPC UA and MQTT interfaces, enabling integration with SCADA systems, cloud platforms, and analytics tools."
       publisher: "Softing Industrial"
-      versions: ["latest"]
+      versions: ["v2025.03"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/softingmodbus/200/200"
       tags: ["modbus", "opc-ua", "mqtt", "protocol-gateway"]
@@ -425,7 +365,7 @@ apps:
       description: "Siemens S7 to OPC UA and MQTT gateway"
       overview: "Softing edgeConnector Siemens provides native connectivity to Siemens SIMATIC S7-300/400/1200/1500 PLCs. It reads data directly from Siemens controllers and publishes it via OPC UA and MQTT, enabling seamless integration with Industry 4.0 applications, cloud platforms, and data analytics systems."
       publisher: "Softing Industrial"
-      versions: ["latest"]
+      versions: ["v2025.03"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/softingsiemens/200/200"
       tags: ["siemens", "s7", "opc-ua", "mqtt", "protocol-gateway"]
@@ -448,7 +388,7 @@ apps:
       description: "Siemens SINUMERIK to OPC UA and MQTT gateway"
       overview: "Softing edgeConnector 840D specializes in connecting to Siemens SINUMERIK 840D sl/pl CNC controllers. It extracts machine and process data from CNC systems and makes it available via OPC UA and MQTT, enabling predictive maintenance, production monitoring, and integration with manufacturing execution systems."
       publisher: "Softing Industrial"
-      versions: ["latest"]
+      versions: ["v2025.03"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/softing840d/200/200"
       tags: ["sinumerik", "cnc", "opc-ua", "mqtt", "protocol-gateway"]
@@ -471,7 +411,7 @@ apps:
       description: "FANUC CNC to OPC UA and MQTT gateway"
       overview: "Softing edgeConnector FANUC CNC connects to FANUC CNC controllers to collect machine and process data. It provides standardized access to CNC parameters, alarm states, and operational data via OPC UA and MQTT protocols, enabling real-time monitoring, analytics, and integration with IIoT platforms."
       publisher: "Softing Industrial"
-      versions: ["latest"]
+      versions: ["v2025.03"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/softingfanuc/200/200"
       tags: ["fanuc", "cnc", "opc-ua", "mqtt", "protocol-gateway"]
@@ -499,7 +439,7 @@ apps:
       description: "OPC UA data aggregation service"
       overview: "Softing edgeConnector Aggregator provides a powerful OPC UA aggregation service that consolidates data from multiple OPC UA sources into a single unified interface. It aggregates, filters, and republishes data via OPC UA and MQTT, simplifying complex industrial network architectures and reducing system integration complexity."
       publisher: "Softing Industrial"
-      versions: ["latest"]
+      versions: ["v2025.03"]
       category: "industrial-automation"
       icon: "https://picsum.photos/seed/softingagg/200/200"
       tags: ["opc-ua", "mqtt", "aggregation", "protocol-gateway"]
