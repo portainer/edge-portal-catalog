@@ -16,11 +16,10 @@ apps:
       publisher: "OpenJS Foundation"
       versions: ["4.1.1"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/nodered/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/node-red.png"
       tags: ["automation", "low-code", "iot", "mqtt"]
       screenshots:
-        - "https://picsum.photos/seed/nodered1/800/600"
-        - "https://picsum.photos/seed/nodered2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/node-red-1.jpeg"
       documentation: "https://nodered.org/docs/"
     variants:
       - label: "Production"
@@ -44,11 +43,10 @@ apps:
       publisher: "Grafana Labs"
       versions: ["12.2.1"]
       category: "visualization"
-      icon: "https://picsum.photos/seed/grafana/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/grafana.png"
       tags: ["visualization", "monitoring", "dashboards", "analytics"]
       screenshots:
-        - "https://picsum.photos/seed/grafana1/800/600"
-        - "https://picsum.photos/seed/grafana2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/grafana-1.png"
       documentation: "https://grafana.com/docs/"
     variants:
       - label: "Production"
@@ -74,11 +72,10 @@ apps:
       publisher: "Timescale"
       versions: ["2.23.1-pg17"]
       category: "database"
-      icon: "https://picsum.photos/seed/timescaledb/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/timescale-db.png"
       tags: ["database", "time-series", "postgresql", "sql"]
       screenshots:
-        - "https://picsum.photos/seed/timescaledb1/800/600"
-        - "https://picsum.photos/seed/timescaledb2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/timescale-db-1.png"
       documentation: "https://docs.timescale.com/"
     variants:
       - label: "Production"
@@ -101,11 +98,10 @@ apps:
       publisher: "EMQ Technologies"
       versions: ["6.0.1"]
       category: "messaging"
-      icon: "https://picsum.photos/seed/emqx/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/emqx.png"
       tags: ["mqtt", "broker", "messaging", "iot"]
       screenshots:
-        - "https://picsum.photos/seed/emqx1/800/600"
-        - "https://picsum.photos/seed/emqx2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/emqx-1.png"
       documentation: "https://www.emqx.io/docs/"
     variants:
       - label: "Production"
@@ -131,11 +127,10 @@ apps:
       publisher: "Cedalo"
       versions: ["2.8"]
       category: "messaging"
-      icon: "https://picsum.photos/seed/cedalo-broker/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/cedalo-mosquitto.png"
       tags: ["mqtt", "broker", "messaging"]
       screenshots:
-        - "https://picsum.photos/seed/cedalo-broker1/800/600"
-        - "https://picsum.photos/seed/cedalo-broker2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/cedalo-mosquitto-mc-1.png"
       documentation: "https://cedalo.com/docs/"
     variants:
       - label: "Production"
@@ -160,11 +155,10 @@ apps:
       publisher: "Cedalo"
       versions: ["2.8"]
       category: "messaging"
-      icon: "https://picsum.photos/seed/cedalo/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/cedalo-mosquitto.png"
       tags: ["mqtt", "broker", "messaging", "management"]
       screenshots:
-        - "https://picsum.photos/seed/cedalo1/800/600"
-        - "https://picsum.photos/seed/cedalo2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/cedalo-mosquitto-mc-1.png"
       documentation: "https://cedalo.com/docs/"
     variants:
       - label: "Production"
@@ -194,11 +188,10 @@ apps:
       publisher: "inray Industriesoftware GmbH"
       versions: ["5.5"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/opcrouter/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/opc-router.png"
       tags: ["opc", "middleware", "integration", "automation"]
       screenshots:
-        - "https://picsum.photos/seed/opcrouter1/800/600"
-        - "https://picsum.photos/seed/opcrouter2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/opc-router-1.png"
       documentation: "https://www.opc-router.com/documentation/"
     variants:
       - label: "Production"
@@ -227,11 +220,10 @@ apps:
       publisher: "Apache Software Foundation"
       versions: ["2.6.0"]
       category: "data-processing"
-      icon: "https://picsum.photos/seed/nifi/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/apache-nifi.png"
       tags: ["data-flow", "etl", "integration", "automation"]
       screenshots:
-        - "https://picsum.photos/seed/nifi1/800/600"
-        - "https://picsum.photos/seed/nifi2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/apache-nifi-1.png"
       documentation: "https://nifi.apache.org/docs.html"
     variants:
       - label: "Production"
@@ -257,11 +249,10 @@ apps:
       publisher: "Inductive Automation"
       versions: ["8.3.1"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/ignition/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/ignition-gateway.png"
       tags: ["scada", "mes", "hmi", "automation"]
       screenshots:
-        - "https://picsum.photos/seed/ignition1/800/600"
-        - "https://picsum.photos/seed/ignition2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/ignition-gateway-1.png"
       documentation: "https://docs.inductiveautomation.com/"
     variants:
       - label: "Production"
@@ -298,11 +289,10 @@ apps:
       publisher: "Litmus Automation"
       versions: ["latest"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/litmus/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/litmus-edge.png"
       tags: ["edge-platform", "data-collection", "iot", "industrial"]
       screenshots:
-        - "https://picsum.photos/seed/litmus1/800/600"
-        - "https://picsum.photos/seed/litmus2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/litmus-edge-1.png"
       documentation: "https://www.litmus.io/documentation/"
     variants:
       - label: "Production"
@@ -321,11 +311,10 @@ apps:
       publisher: "Anyviz"
       versions: ["2.1.2.0"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/anyviz/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/anyviz.png"
       tags: ["remote-access", "vpn", "connectivity", "security"]
       screenshots:
-        - "https://picsum.photos/seed/anyviz1/800/600"
-        - "https://picsum.photos/seed/anyviz2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/anyviz-1.png"
       documentation: "https://www.anyviz.io/documentation/"
     variants:
       - label: "Production"
@@ -344,11 +333,10 @@ apps:
       publisher: "Softing Industrial"
       versions: ["v2025.03"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/softingmodbus/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/softing.png"
       tags: ["modbus", "opc-ua", "mqtt", "protocol-gateway"]
       screenshots:
-        - "https://picsum.photos/seed/softingmodbus1/800/600"
-        - "https://picsum.photos/seed/softingmodbus2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/softing-edgeconnector-modbus-1.png"
       documentation: "https://industrial.softing.com/products/edgeconnector.html"
     variants:
       - label: "Production"
@@ -367,11 +355,10 @@ apps:
       publisher: "Softing Industrial"
       versions: ["v2025.03"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/softingsiemens/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/softing.png"
       tags: ["siemens", "s7", "opc-ua", "mqtt", "protocol-gateway"]
       screenshots:
-        - "https://picsum.photos/seed/softingsiemens1/800/600"
-        - "https://picsum.photos/seed/softingsiemens2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/softing-edgeconnector-s7-1.png"
       documentation: "https://industrial.softing.com/products/edgeconnector.html"
     variants:
       - label: "Production"
@@ -390,11 +377,10 @@ apps:
       publisher: "Softing Industrial"
       versions: ["v2025.03"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/softing840d/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/softing.png"
       tags: ["sinumerik", "cnc", "opc-ua", "mqtt", "protocol-gateway"]
       screenshots:
-        - "https://picsum.photos/seed/softing840d1/800/600"
-        - "https://picsum.photos/seed/softing840d2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/softing-edgeconnector-sinumerik-1.png"
       documentation: "https://industrial.softing.com/products/edgeconnector.html"
     variants:
       - label: "Production"
@@ -413,11 +399,10 @@ apps:
       publisher: "Softing Industrial"
       versions: ["v2025.03"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/softingfanuc/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/softing.png"
       tags: ["fanuc", "cnc", "opc-ua", "mqtt", "protocol-gateway"]
       screenshots:
-        - "https://picsum.photos/seed/softingfanuc1/800/600"
-        - "https://picsum.photos/seed/softingfanuc2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/softing-edgeconnector-fanuccnc-1.png"
       documentation: "https://industrial.softing.com/products/edgeconnector.html"
     variants:
       - label: "Production"
@@ -441,11 +426,10 @@ apps:
       publisher: "Softing Industrial"
       versions: ["v2025.03"]
       category: "industrial-automation"
-      icon: "https://picsum.photos/seed/softingagg/200/200"
+      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/softing.png"
       tags: ["opc-ua", "mqtt", "aggregation", "protocol-gateway"]
       screenshots:
-        - "https://picsum.photos/seed/softingagg1/800/600"
-        - "https://picsum.photos/seed/softingagg2/800/600"
+        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/softing-edgeaggregator-1.png"
       documentation: "https://industrial.softing.com/products/edgeconnector.html"
     variants:
       - label: "Production"
