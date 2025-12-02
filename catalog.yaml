@@ -8,32 +8,32 @@ defaults:
     ref: "master"
 
 apps:
-  node-red:
-    metadata:
-      name: "Node-RED"
-      description: "Low-code programming for event-driven applications"
-      overview: "Node-RED is a flow-based development tool for visual programming developed originally by IBM for wiring together hardware devices, APIs and online services as part of the Internet of Things. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
-      publisher: "OpenJS Foundation"
-      versions: ["4.1.1"]
-      category: "industrial-automation"
-      icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/node-red.png"
-      tags: ["automation", "low-code", "iot", "mqtt"]
-      screenshots:
-        - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/node-red-1.jpeg"
-      documentation: "https://nodered.org/docs/"
-    variants:
-      - label: "Production"
-        deployment:
-          compose:
-            path: "edge/node-red/docker-compose.yml"
-        configuration:
-          variables:
-            - name: "TZ"
-              label: "Timezone"
-              default: "UTC"
-    requirements:
-      minMemory: "256MB"
-      architecture: ["amd64", "arm64"]
+  # node-red:
+  #   metadata:
+  #     name: "Node-RED"
+  #     description: "Low-code programming for event-driven applications"
+  #     overview: "Node-RED is a flow-based development tool for visual programming developed originally by IBM for wiring together hardware devices, APIs and online services as part of the Internet of Things. It provides a browser-based flow editor that makes it easy to wire together flows using the wide range of nodes in the palette."
+  #     publisher: "OpenJS Foundation"
+  #     versions: ["4.1.1"]
+  #     category: "industrial-automation"
+  #     icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/logos/node-red.png"
+  #     tags: ["automation", "low-code", "iot", "mqtt"]
+  #     screenshots:
+  #       - "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/industrial-app-portal/screenshots/node-red-1.jpeg"
+  #     documentation: "https://nodered.org/docs/"
+  #   variants:
+  #     - label: "Production"
+  #       deployment:
+  #         compose:
+  #           path: "edge/node-red/docker-compose.yml"
+  #       configuration:
+  #         variables:
+  #           - name: "TZ"
+  #             label: "Timezone"
+  #             default: "UTC"
+  #   requirements:
+  #     minMemory: "256MB"
+  #     architecture: ["amd64", "arm64"]
 
   grafana:
     metadata:
