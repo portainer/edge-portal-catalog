@@ -14,7 +14,7 @@ apps:
       description: "High-performance web server and reverse proxy"
       overview: "NGINX is a high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. It's known for its high performance, stability, rich feature set, simple configuration, and low resource consumption. NGINX is widely used for serving static content, load balancing, and as a reverse proxy."
       publisher: "NGINX Inc."
-      versions: ["latest", "1.25", "1.24"]
+      versions: ["1.25"]
       category: "web-server"
       icon: "https://picsum.photos/seed/nginx/200/200"
       tags: ["web-server", "proxy", "load-balancer", "http"]
