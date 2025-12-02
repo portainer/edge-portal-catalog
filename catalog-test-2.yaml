@@ -215,3 +215,30 @@ apps:
               label: "Persistence Path"
               default: "/data/redis"
 
+  prometheus:
+    metadata:
+      name: "Prometheus"
+      description: "Monitoring and alerting toolkit"
+      overview: "Prometheus is an open-source systems monitoring and alerting toolkit originally built at SoundCloud. Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels."
+      publisher: "Prometheus Authors"
+      versions: ["2.45.0", "2.46.0", "2.47.0"]
+      category: "monitoring"
+      icon: "https://picsum.photos/seed/prometheus/200/200"
+      tags: ["monitoring", "metrics", "alerting", "time-series"]
+      screenshots:
+        - "https://picsum.photos/seed/prometheus1/800/600"
+      documentation: "https://prometheus.io/docs/"
+    variants:
+      - label: "Production"
+        deployment:
+          compose:
+            path: "apps/prometheus/docker-compose.yml"
+        configuration:
+          variables:
+            - name: "PROMETHEUS_PORT"
+              label: "Prometheus Port"
+              default: "9090"
+            - name: "RETENTION_TIME"
+              label: "Data Retention Time"
+              default: "15d"
+
